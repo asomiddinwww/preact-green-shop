@@ -52,7 +52,6 @@ const Showcase = () => {
   return (
     <section className="w-full mt-3 sm:mt-6 rounded-none sm:rounded-sm overflow-hidden">
       <div className="w-[90%] m-auto bg-[#F5F5F5]/50 px-4 sm:px-10 py-8 sm:py-12 lg:py-24 flex flex-col md:flex-row items-center relative transition-all duration-500">
-        {/* Slayd Ma'lumotlari */}
         <div className="flex-1 z-10 text-center md:text-left order-2 md:order-1 mt-8 md:mt-0">
           <h3 className="text-[#3D3D3D] text-[11px] sm:text-base font-medium uppercase tracking-[0.1em] mb-2 sm:mb-4">
             {slides[activeSlide].subTitle}

@@ -15,7 +15,6 @@ const Orders: React.FC = () => {
 
       {data && data.length > 0 ? (
         <div className="w-full overflow-hidden">
-          {/* Jadval Sarlavhasi */}
           <div className="grid grid-cols-5 pb-4 border-b border-[#46A358]/20 px-4 text-[#3D3D3D] font-bold text-[15px]">
             <div className="col-span-2">Product Name</div>
             <div className="text-center">Purchase Date</div>
@@ -23,14 +22,12 @@ const Orders: React.FC = () => {
             <div className="text-right">Action</div>
           </div>
 
-          {/* Jadval Tanasi - Har bir card uchun alohida qator */}
           <div className="flex flex-col gap-3 mt-4">
             {data.map((item: any, index: number) => (
               <div
                 key={item._id + index}
                 className="grid grid-cols-5 items-center px-4 py-4 bg-[#FBFBFB] hover:bg-white hover:shadow-sm transition-all rounded-[4px] border border-transparent hover:border-[#46A358]/10"
               >
-                {/* 1 & 2: Mahsulot (Shop Card) ma'lumotlari */}
                 <div className="col-span-2 flex items-center gap-4">
                   <div className="w-12 h-12 bg-white rounded-md overflow-hidden border border-gray-100 flex-shrink-0">
                     <img
@@ -53,12 +50,10 @@ const Orders: React.FC = () => {
                   {new Date().toISOString().split("T")[0]}
                 </div>
 
-                {/* 4: Mahsulotning umumiy narxi (Shop narxi) */}
                 <div className="text-center font-bold text-[#46A358] text-[15px]">
                   $ {(item.userPrice || item.price).toFixed(2)}
                 </div>
 
-                {/* 5: More info (Sahifasiga o'tish) */}
                 <div className="text-right">
                   <button
                     className="text-[#46A358] font-bold hover:underline text-[14px]"
@@ -74,7 +69,6 @@ const Orders: React.FC = () => {
           </div>
         </div>
       ) : (
-        /* Mahsulot bo'lmaganda */
         <div className="flex flex-col items-center justify-center py-24 bg-[#FBFBFB] rounded-xl border border-dashed border-gray-200">
           <ShoppingOutlined className="text-5xl text-gray-300 mb-4" />
           <h3 className="text-lg font-bold text-[#3D3D3D]">No Shop History</h3>

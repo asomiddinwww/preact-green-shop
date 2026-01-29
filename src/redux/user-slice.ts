@@ -30,7 +30,7 @@ export const userSlice = createSlice({
       state.user = action.payload;
 
       if (action.payload) {
-        Cookies.set("user", JSON.stringify(action.payload), { expires: 7 }); // 7 kunga saqlash
+        Cookies.set("user", JSON.stringify(action.payload), { expires: 7 });
       } else {
         Cookies.remove("user");
       }

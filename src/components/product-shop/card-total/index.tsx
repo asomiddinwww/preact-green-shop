@@ -46,7 +46,7 @@ const CardTotal = () => {
       <Prices />
 
       <button
-        onClick={handleCheckout} // Yangi funksiya
+        onClick={handleCheckout}
         className="bg-[#46A358] flex rounded-md items-center justify-center gap-1 text-base text-white w-full h-[40px] mt-[30px] font-bold"
       >
         Proceed To Checkout

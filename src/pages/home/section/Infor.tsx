@@ -26,7 +26,6 @@ const Infor = () => {
           </div>
         </div>
 
-        {/* Ikkinchi Card */}
         <div className="w-full flex flex-col sm:flex-row p-6 md:p-10 bg-[#FBFBFB] justify-between text-center sm:text-end items-center relative min-h-[250px]">
           <div className="w-full sm:w-1/2 flex justify-center sm:justify-start mb-4 sm:mb-0">
             <img src={infor1} className="absolute bottom-10" alt="succulents" />

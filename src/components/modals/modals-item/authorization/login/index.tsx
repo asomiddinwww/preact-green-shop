@@ -11,28 +11,21 @@ const Login: React.FC = () => {
   const dispatch = useReduxDispatch();
   const { mutate, isPending } = useLoginMutation();
 
-  // Umumiy login qilish funksiyasi (kod takrorlanmasligi uchun)
   const handleAuthSuccess = (res: any) => {
-    // Backenddan kelayotgan resni tekshirish:
-    // Ba'zan res.data ichida bo'ladi, ba'zan res ichida
     const responseData = res?.data || res;
     const token = responseData?.token;
     const user = responseData?.user;
 
     if (token && user) {
-      // 1. Redux-ga saqlash
       dispatch(setCredentials({ token, user }));
 
-      // 2. LocalStorage-ga qo'lda saqlash (reload bo'lganda o'chib ketmasligi uchun)
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
 
       message.success("Muvaffaqiyatli kirdingiz!");
 
-      // 3. Modalni yopish
       dispatch(setAuhorizationModalVisiblty());
 
-      // 4. Sahifani yangilash (ozgina kechikish bilan)
       setTimeout(() => {
         window.location.reload();
       }, 500);
@@ -57,7 +50,7 @@ const Login: React.FC = () => {
 
   const handleGoogleSuccess = (response: any) => {
     const payload = {
-      email: "google-auth", // Backend talabiga qarab o'zgartiring
+      email: "google-auth",
       password: "google-auth-password",
       access_token: response.credential,
     };

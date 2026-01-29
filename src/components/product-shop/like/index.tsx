@@ -43,7 +43,6 @@ const WishlistPage: React.FC = () => {
                   .00
                 </p>
 
-                {/* Tugmalar */}
                 <div className="flex gap-2 mt-4">
                   <button
                     onClick={() => dispatch(getData(product))}

@@ -1,6 +1,5 @@
 import { useSearchParams } from "react-router-dom";
 import { useQueryHandler } from "../../../hooks/useQuery";
-import SkeletonImage from "antd/es/skeleton/Image";
 import Card from "./card";
 
 export const useSearchParamsHandler = () => {
@@ -12,7 +11,6 @@ export const useSearchParamsHandler = () => {
     const currentParams = Object.fromEntries(params.entries());
     const updatedParams = { ...currentParams, ...newParams };
 
-    // Bo'sh qiymatlarni o'chirish
     Object.keys(updatedParams).forEach((key) => {
       if (!updatedParams[key]) delete updatedParams[key];
     });
@@ -26,10 +24,9 @@ export const useSearchParamsHandler = () => {
 const Productss = () => {
   const { getParam, setParam } = useSearchParamsHandler();
 
-  // URL'dagi link formatiga moslab olamiz
   const category = getParam("category") || "house-plants";
   const type = getParam("type") || "all-plants";
-  const sort = getParam("sort") || "default-sorting"; // Default qiymat linkdagidek
+  const sort = getParam("sort") || "default-sorting";
   const range_min = Number(getParam("range_min")) || 0;
   const range_max = Number(getParam("range_max")) || 1000;
 

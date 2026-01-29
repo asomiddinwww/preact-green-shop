@@ -20,7 +20,7 @@ const ProfilePage: React.FC = () => {
     }
   }, [user, form]);
 
-  const onFinish = async (values: any) => {
+  const onFinish = async () => {
     setLoading(true);
     try {
       message.success("O'zgarishlar muvaffaqiyatli saqlandi!");

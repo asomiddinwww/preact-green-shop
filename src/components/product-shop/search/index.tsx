@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Image, Rate, message } from "antd";
+import { Image, Rate } from "antd";
 import {
   HeartOutlined,
   ShoppingCartOutlined,
@@ -56,7 +56,6 @@ const ProductPage = () => {
 
   return (
     <div className="w-[92%] max-w-[1400px] m-auto mt-8 mb-24 font-sans">
-      {/* Breadcrumb - Minimalist style */}
       <nav className="mb-10 text-[14px] flex items-center gap-2 text-gray-400">
         <span
           onClick={() => navigate("/")}
@@ -78,7 +77,6 @@ const ProductPage = () => {
       </nav>
 
       <div className="flex flex-col lg:flex-row gap-16">
-        {/* LEFT: Image Gallery Section */}
         <div className="flex flex-1 gap-6 h-fit lg:h-[600px]">
           {/* Thumbnails */}
           <div className="flex flex-col gap-4 w-[85px] h-full overflow-y-auto hidden md:flex no-scrollbar">
@@ -101,7 +99,6 @@ const ProductPage = () => {
             ))}
           </div>
 
-          {/* Main Display */}
           <div className="flex-1 h-[400px] md:h-full bg-[#FBFBFB] rounded-[30px] overflow-hidden border border-gray-100 relative group shadow-sm flex items-center justify-center p-8">
             <Image
               src={currentImage}
@@ -142,7 +139,6 @@ const ProductPage = () => {
           </div>
 
           <div className="space-y-8">
-            {/* Description */}
             <div>
               <h3 className="font-bold text-[#3D3D3D] text-[16px] mb-2">
                 Short Description:
@@ -155,7 +151,6 @@ const ProductPage = () => {
               </p>
             </div>
 
-            {/* Sizes */}
             <div>
               <h3 className="font-bold text-[#3D3D3D] text-[16px] mb-3">
                 Select Size:
@@ -180,7 +175,6 @@ const ProductPage = () => {
               </div>
             </div>
 
-            {/* Actions */}
             <div className="flex flex-wrap items-center gap-4 pt-4">
               <button className="flex-1 min-w-[180px] bg-[#3D3D3D] text-white h-[55px] rounded-2xl font-black hover:bg-black transition-all shadow-xl active:scale-95 uppercase tracking-wider text-sm">
                 Buy Now
@@ -196,7 +190,6 @@ const ProductPage = () => {
               </button>
             </div>
 
-            {/* Meta Info */}
             <div className="p-6 bg-gray-50 rounded-3xl space-y-3 text-[14px]">
               <div className="flex justify-between border-b border-gray-200/50 pb-2">
                 <span className="text-[#A5A5A5]">SKU</span>
@@ -220,7 +213,6 @@ const ProductPage = () => {
               </div>
             </div>
 
-            {/* Social Share */}
             <div className="flex items-center gap-4">
               <span className="font-bold text-[14px] text-[#3D3D3D] flex items-center gap-2">
                 <ShareAltOutlined /> Share:
@@ -236,7 +228,6 @@ const ProductPage = () => {
         </div>
       </div>
 
-      {/* Description Tabs Section */}
       <div className="mt-28">
         <div className="flex gap-10 border-b-2 border-gray-100 mb-10">
           <h3 className="text-[#46A358] font-black text-lg border-b-4 border-[#46A358] pb-4 -mb-[3px] relative z-10">
