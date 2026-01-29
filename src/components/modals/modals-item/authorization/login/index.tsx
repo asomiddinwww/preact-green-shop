@@ -9,40 +9,73 @@ import { setCredentials } from "../../../../../redux/auth-slice";
 
 const Login: React.FC = () => {
   const dispatch = useReduxDispatch();
-
   const { mutate, isPending } = useLoginMutation();
+
+  // Umumiy login qilish funksiyasi (kod takrorlanmasligi uchun)
+  const handleAuthSuccess = (res: any) => {
+    // Backenddan kelayotgan resni tekshirish:
+    // Ba'zan res.data ichida bo'ladi, ba'zan res ichida
+    const responseData = res?.data || res;
+    const token = responseData?.token;
+    const user = responseData?.user;
+
+    if (token && user) {
+      // 1. Redux-ga saqlash
+      dispatch(setCredentials({ token, user }));
+
+      // 2. LocalStorage-ga qo'lda saqlash (reload bo'lganda o'chib ketmasligi uchun)
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+
+      message.success("Muvaffaqiyatli kirdingiz!");
+
+      // 3. Modalni yopish
+      dispatch(setAuhorizationModalVisiblty());
+
+      // 4. Sahifani yangilash (ozgina kechikish bilan)
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
+    } else {
+      console.error("Format xatosi! Kelgan ma'lumot:", res);
+      message.error("Backenddan noto'g'ri ma'lumot keldi!");
+    }
+  };
 
   const onFinish = (values: any) => {
     mutate(values, {
       onSuccess: (res: any) => {
-        const { token, user } = res.data;
-
-        dispatch(setCredentials({ token, user }));
-
-        message.success("Muvaffaqiyatli kirdingiz!");
-        window.location.reload();
-        dispatch(setAuhorizationModalVisiblty());
+        handleAuthSuccess(res);
       },
-      onError: () => message.error("Xato!"),
+      onError: (err: any) => {
+        const errorMsg =
+          err.response?.data?.message || "Email yoki parol xato!";
+        message.error(errorMsg);
+      },
     });
   };
 
   const handleGoogleSuccess = (response: any) => {
     const payload = {
-      email: "google-auth",
+      email: "google-auth", // Backend talabiga qarab o'zgartiring
       password: "google-auth-password",
       access_token: response.credential,
     };
 
-    message.loading("Tizimga kirilmoqda...");
+    message.loading({
+      content: "Google orqali kirilmoqda...",
+      key: "google_loading",
+    });
 
     mutate(payload as any, {
-      onSuccess: () => {
-        message.success("Muvaffaqiyatli kirdingiz!");
+      onSuccess: (res: any) => {
+        message.destroy("google_loading");
+        handleAuthSuccess(res);
       },
       onError: (err: any) => {
-        console.log("Xato tafsiloti:", err.response?.data);
-        message.error("Backend ma'lumotni qabul qilmadi.");
+        message.destroy("google_loading");
+        console.log("Google Auth Error:", err.response?.data);
+        message.error("Google orqali kirishda xatolik!");
       },
     });
   };
@@ -61,11 +94,8 @@ const Login: React.FC = () => {
           name="email"
           label="Email"
           rules={[
-            {
-              required: true,
-              type: "email",
-              message: "To'g'ri email kiriting!",
-            },
+            { required: true, message: "Emailni kiriting!" },
+            { type: "email", message: "To'g'ri email formatini kiriting!" },
           ]}
         >
           <Input
@@ -106,10 +136,9 @@ const Login: React.FC = () => {
         <GoogleLogin
           onSuccess={handleGoogleSuccess}
           onError={() => message.error("Google orqali kirishda xatolik!")}
-          useOneTap
           theme="outline"
           shape="rectangular"
-          width="100%"
+          width="320"
         />
       </div>
     </div>

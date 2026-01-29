@@ -1,30 +1,62 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { Modal, Radio, message } from "antd";
+import { Modal, Radio, message, Tooltip } from "antd";
 import { useNavigate } from "react-router-dom";
-import type { ShopCardType, ShopCartType } from "../../../@types/inedx";
+import {
+  CreditCardOutlined,
+  CarOutlined,
+  BankOutlined,
+  InfoCircleOutlined,
+} from "@ant-design/icons";
+import type { ShopCartType } from "../../../@types/inedx";
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("cash");
 
-  const { data } = useSelector((state: any) => state.shopSlice);
+  const { data, coupon } = useSelector((state: any) => state.shopSlice);
+  const { user } = useSelector((state: any) => state.authSlice);
+
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    country: "",
+    city: "",
+    street: "",
+    state: "",
+    zip: "",
+    appartment: "",
+  });
+
+  useEffect(() => {
+    if (user) {
+      setFormData((prev) => ({
+        ...prev,
+        firstName: user.firstName || user.name || "",
+        lastName: user.lastName || user.surname || "",
+        email: user.email || "",
+        phone: user.phone_number || "",
+      }));
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (!data || data.length === 0) {
+      navigate("/");
+    }
+  }, [data, navigate]);
 
   const subtotal =
     data?.reduce(
-      (acc: number, item: ShopCardType) => acc + (item.userPrice || 0),
+      (acc: number, item: ShopCartType) => acc + item.price * item.counter,
       0,
     ) || 0;
+  const couponDiscount = coupon ? (subtotal * coupon) / 100 : 0;
   const shipping = 16.0;
-  const total = subtotal + shipping;
-
-  const date = new Date();
-  const formattedDate = date.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
+  const total = subtotal - couponDiscount + shipping;
 
   const handlePlaceOrder = (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,413 +64,438 @@ const CheckoutPage = () => {
       message.error("Your cart is empty!");
       return;
     }
-
     setIsModalOpen(true);
   };
 
+  const labelStyle =
+    "text-[14px] font-medium text-[#4A4A4A] mb-1.5 flex items-center gap-1";
+  const inputStyle =
+    "w-full border border-[#E0E0E0] rounded-lg px-4 py-2.5 outline-none focus:border-[#46A358] focus:ring-2 focus:ring-[#46A358]/10 text-[14px] transition-all bg-white hover:border-[#46A358]/50";
+
   return (
-    <div className="w-[90%] max-w-[1550px] m-auto mt-10 mb-20">
-      <form
-        onSubmit={handlePlaceOrder}
-        className="flex flex-col md:flex-row gap-10"
-      >
-        <div className="w-full md:w-[60%]">
-          <h2 className="text-[17px] font-bold text-[#3D3D3D] mb-6">
-            Billing Address
-          </h2>
+    <div className="bg-[#F9FBFA] min-h-screen py-12">
+      <div className="w-[92%] max-w-[1250px] m-auto">
+        {/* Breadcrumb or Title Area */}
+        <div className="mb-10">
+          <h1 className="text-3xl font-extrabold text-[#3D3D3D]">Checkout</h1>
+          <p className="text-gray-500 mt-1">
+            Please enter your details to complete your purchase.
+          </p>
+        </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <div className="flex flex-col gap-2">
-              <label className="text-[15px] text-[#3D3D3D]">
-                First Name <span className="text-red-500">*</span>
-              </label>
-              <input
-                required
-                type="text"
-                placeholder="Enter your first name..."
-                className="border border-[#EAEAEA] rounded p-2 focus:outline-[#46A358] placeholder:text-gray-400 placeholder:text-sm"
-              />
+        <form
+          onSubmit={handlePlaceOrder}
+          className="flex flex-col lg:flex-row gap-10 items-start"
+        >
+          {/* LEFT: Billing Details */}
+          <div className="flex-1 bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+            <div className="flex items-center gap-3 mb-8 pb-4 border-b border-gray-50">
+              <div className="w-8 h-8 bg-[#46A358] text-white rounded-full flex items-center justify-center font-bold">
+                1
+              </div>
+              <h2 className="text-xl font-bold text-[#3D3D3D]">
+                Billing Details
+              </h2>
             </div>
-            <div className="flex flex-col gap-2">
-              <label className="text-[15px] text-[#3D3D3D]">
-                Last Name <span className="text-red-500">*</span>
-              </label>
-              <input
-                required
-                type="text"
-                placeholder="Enter your last name..."
-                className="border border-[#EAEAEA] rounded p-2 placeholder:text-gray-400 placeholder:text-sm focus:outline-[#46A358]"
-              />
-            </div>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <div className="flex flex-col gap-2">
-              <label className="text-[15px] text-[#3D3D3D]">
-                Country / Region <span className="text-red-500">*</span>
-              </label>
-              <input
-                required
-                type="text"
-                placeholder="Enter your country / region..."
-                className="border border-[#EAEAEA] rounded p-2 placeholder:text-gray-400 placeholder:text-sm focus:outline-[#46A358]"
-              />
-            </div>
-            <div className="flex flex-col gap-2">
-              <label className="text-[15px] text-[#3D3D3D]">
-                Town / City <span className="text-red-500">*</span>
-              </label>
-              <input
-                required
-                type="text"
-                placeholder="Enter your town / city..."
-                className="border border-[#EAEAEA] rounded p-2 placeholder:text-gray-400 placeholder:text-sm focus:outline-[#46A358]"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <div className="flex flex-col gap-2">
-              <label className="text-[15px] text-[#3D3D3D]">
-                Street Address <span className="text-red-500">*</span>
-              </label>
-              <input
-                required
-                type="text"
-                placeholder="Enter your street..."
-                className="border border-[#EAEAEA] rounded p-2 placeholder:text-gray-400 placeholder:text-sm focus:outline-[#46A358]"
-              />
-            </div>
-            <div className="flex flex-col gap-2">
-              <label className="text-[15px] text-[#3D3D3D]">&nbsp;</label>
-              <input
-                type="text"
-                placeholder="Enter your apartment..."
-                className="border border-[#EAEAEA] rounded p-2 placeholder:text-gray-400 placeholder:text-sm focus:outline-[#46A358]"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <div className="flex flex-col gap-2">
-              <label className="text-[15px] text-[#3D3D3D]">
-                State <span className="text-red-500">*</span>
-              </label>
-              <input
-                required
-                type="text"
-                placeholder="Enter your state..."
-                className="border border-[#EAEAEA] rounded p-2 placeholder:text-gray-400 placeholder:text-sm focus:outline-[#46A358]"
-              />
-            </div>
-            <div className="flex flex-col gap-2">
-              <label className="text-[15px] text-[#3D3D3D]">
-                Zip <span className="text-red-500">*</span>
-              </label>
-              <input
-                required
-                type="text"
-                placeholder="Enter your zip code..."
-                className="border border-[#EAEAEA] rounded p-2 placeholder:text-gray-400 placeholder:text-sm focus:outline-[#46A358]"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <div className="flex flex-col gap-2">
-              <label className="text-[15px] text-[#3D3D3D]">
-                Email address <span className="text-red-500">*</span>
-              </label>
-              <input
-                required
-                type="email"
-                placeholder="Enter your email..."
-                className="border border-[#EAEAEA] rounded p-2 placeholder:text-gray-400 placeholder:text-sm focus:outline-[#46A358]"
-              />
-            </div>
-            <div className="flex flex-col gap-2">
-              <label className="text-[15px] text-[#3D3D3D]">
-                Phone Number <span className="text-red-500">*</span>
-              </label>
-              <div className="flex border border-[#EAEAEA] rounded overflow-hidden">
-                <span className="p-2 border border-[#46A358]  bg-[#d2efd7] text-gray-500">
-                  +998
-                </span>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-1">
+                <label className={labelStyle}>
+                  First Name <span className="text-red-500">*</span>
+                </label>
                 <input
                   required
-                  type="number"
-                  placeholder="Enter your phone number..."
-                  className="p-2 w-full focus:outline-[#46A358] placeholder:text-gray-400 placeholder:text-sm"
+                  type="text"
+                  value={formData.firstName}
+                  onChange={(e) =>
+                    setFormData({ ...formData, firstName: e.target.value })
+                  }
+                  className={inputStyle}
+                  placeholder="John"
                 />
               </div>
-            </div>
-          </div>
+              <div className="space-y-1">
+                <label className={labelStyle}>
+                  Last Name <span className="text-red-500">*</span>
+                </label>
+                <input
+                  required
+                  type="text"
+                  value={formData.lastName}
+                  onChange={(e) =>
+                    setFormData({ ...formData, lastName: e.target.value })
+                  }
+                  className={inputStyle}
+                  placeholder="Doe"
+                />
+              </div>
 
-          <div className="mb-6">
-            <h3 className="font-bold text-[#3D3D3D] mb-3">
-              Payment Method <span className="text-red-500">*</span>
-            </h3>
-            <Radio.Group
-              onChange={(e) => setPaymentMethod(e.target.value)}
-              value={paymentMethod}
-              className="flex flex-col gap-4"
-            >
-              <Radio
-                value="paypal"
-                className="border border-[#46A358] mb-2! p-3! rounded-[12px] flex items-center w-full sm:w-[50%] "
-              >
-                <div className="flex gap-2 ml-2">
-                  <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg"
-                    alt="PayPal"
-                    className="h-4"
+              <div className="space-y-1">
+                <label className={labelStyle}>
+                  Country / Region <span className="text-red-500">*</span>
+                </label>
+                <input
+                  required
+                  placeholder="Select country"
+                  className={inputStyle}
+                />
+              </div>
+              <div className="space-y-1">
+                <label className={labelStyle}>
+                  Town / City <span className="text-red-500">*</span>
+                </label>
+                <input
+                  required
+                  placeholder="City name"
+                  className={inputStyle}
+                />
+              </div>
+
+              <div className="md:col-span-2 space-y-1">
+                <label className={labelStyle}>
+                  Street Address <span className="text-red-500">*</span>
+                </label>
+                <input
+                  required
+                  placeholder="House number and street name"
+                  className={inputStyle}
+                />
+                <input
+                  placeholder="Apartment, suite, unit, etc. (optional)"
+                  className={`${inputStyle} mt-3`}
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className={labelStyle}>
+                  State <span className="text-red-500">*</span>
+                </label>
+                <input
+                  required
+                  placeholder="Select state"
+                  className={inputStyle}
+                />
+              </div>
+              <div className="space-y-1">
+                <label className={labelStyle}>
+                  Zip Code <span className="text-red-500">*</span>
+                </label>
+                <input required placeholder="Zip code" className={inputStyle} />
+              </div>
+
+              <div className="space-y-1">
+                <label className={labelStyle}>
+                  Email Address <span className="text-red-500">*</span>
+                </label>
+                <input
+                  required
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
+                  className={inputStyle}
+                  placeholder="example@mail.com"
+                />
+              </div>
+              <div className="space-y-1">
+                <label className={labelStyle}>
+                  Phone Number <span className="text-red-500">*</span>
+                </label>
+                <div className="flex border border-[#E0E0E0] rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-[#46A358]/10 focus-within:border-[#46A358] transition-all">
+                  <span className="bg-gray-50 px-4 py-2.5 text-gray-500 border-r border-[#E0E0E0] text-sm flex items-center">
+                    +998
+                  </span>
+                  <input
+                    required
+                    type="tel"
+                    value={formData.phone}
+                    onChange={(e) =>
+                      setFormData({ ...formData, phone: e.target.value })
+                    }
+                    className="flex-1 px-4 py-2.5 outline-none text-[14px]"
                   />
-
-                  <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg"
-                    alt="MasterCard"
-                    className="h-4"
-                  />
-
-                  <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg"
-                    alt="Visa"
-                    className="h-4"
-                  />
-
-                  <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/f/fa/American_Express_logo_%282018%29.svg"
-                    alt="Amex"
-                    className="h-4"
-                  />
-                </div>
-              </Radio>
-
-              <Radio
-                value="bank"
-                className="border border-[#46A358] mb-2! p-3! rounded-[12px] flex items-center w-full sm:w-[50%]"
-              >
-                Direct bank transfer
-              </Radio>
-
-              <Radio
-                value="cash"
-                className="border border-[#46A358] mb-2! p-3! rounded-[12px] flex items-center w-full sm:w-[50%]"
-              >
-                Cash on delivery
-              </Radio>
-            </Radio.Group>
-          </div>
-
-          <div className="md:flex hidden flex-col gap-2 mb-6">
-            <label className="text-[15px] text-[#3D3D3D]">
-              Enter your comment
-            </label>
-            <textarea className="border border-[#EAEAEA] rounded p-2 h-[100px] focus:outline-[#46A358]" />
-          </div>
-          <button
-            type="submit"
-            className="w-full md:flex hidden items-center justify-center cursor-pointer bg-[#46A358] text-white py-3 rounded text-[16px] font-bold hover:bg-[#357c44] transition-all"
-          >
-            Place Order
-          </button>
-        </div>
-
-        <div className="w-full md:w-[40%]">
-          <h2 className="text-[17px] font-bold text-[#3D3D3D] mb-6">
-            Your Order
-          </h2>
-
-          <div className="flex flex-col gap-4 max-h-[400px] overflow-y-auto mb-6 pr-2">
-            {data?.map((item: ShopCartType) => (
-              <div
-                key={item._id}
-                className="flex justify-between items-center bg-[#FBFBFB] p-2 rounded"
-              >
-                <div className="flex items-center gap-3">
-                  <img
-                    src={item.main_image}
-                    alt={item.title}
-                    className="w-[50px] h-[50px] object-cover rounded-full"
-                  />
-                  <div>
-                    <h4 className="text-[14px] font-medium text-[#3D3D3D] line-clamp-1 w-[130px]">
-                      {item.title}
-                    </h4>
-                    <p className="text-[12px] text-[#727272]">
-                      SKU: {item._id.slice(0, 8)}
-                    </p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="text-[#727272] text-[13px]">
-                    (x{item.counter})
-                  </p>
-                  <p className="text-[#46A358] font-bold text-[14px]">
-                    ${(item.price * item.counter).toFixed(2)}
-                  </p>
                 </div>
               </div>
-            ))}
+            </div>
+
+            {/* Payment Method Section */}
+            <div className="mt-12">
+              <div className="flex items-center gap-3 mb-6 pb-4 border-b border-gray-50">
+                <div className="w-8 h-8 bg-[#46A358] text-white rounded-full flex items-center justify-center font-bold">
+                  2
+                </div>
+                <h2 className="text-xl font-bold text-[#3D3D3D]">
+                  Payment Method
+                </h2>
+              </div>
+
+              <Radio.Group
+                onChange={(e) => setPaymentMethod(e.target.value)}
+                value={paymentMethod}
+                className="w-full grid grid-cols-1 gap-3"
+              >
+                <div
+                  className={`border rounded-xl p-4 transition-all hover:bg-gray-50 ${paymentMethod === "paypal" ? "border-[#46A358] bg-[#46A358]/5" : "border-gray-200"}`}
+                >
+                  <Radio value="paypal" className="w-full">
+                    <div className="flex items-center gap-4 ml-2">
+                      <span className="font-semibold text-gray-700">
+                        PayPal / Cards
+                      </span>
+                      <div className="flex gap-2">
+                        <img
+                          src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg"
+                          className="h-4"
+                          alt="paypal"
+                        />
+                        <img
+                          src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg"
+                          className="h-3"
+                          alt="visa"
+                        />
+                      </div>
+                    </div>
+                  </Radio>
+                </div>
+
+                <div
+                  className={`border rounded-xl p-4 transition-all hover:bg-gray-50 ${paymentMethod === "bank" ? "border-[#46A358] bg-[#46A358]/5" : "border-gray-200"}`}
+                >
+                  <Radio value="bank" className="w-full">
+                    <span className="font-semibold text-gray-700 ml-2 flex items-center gap-2">
+                      <BankOutlined /> Direct Bank Transfer
+                    </span>
+                  </Radio>
+                </div>
+
+                <div
+                  className={`border rounded-xl p-4 transition-all hover:bg-gray-50 ${paymentMethod === "cash" ? "border-[#46A358] bg-[#46A358]/5" : "border-gray-200"}`}
+                >
+                  <Radio value="cash" className="w-full">
+                    <span className="font-semibold text-gray-700 ml-2 flex items-center gap-2">
+                      <CarOutlined /> Cash on Delivery
+                    </span>
+                  </Radio>
+                </div>
+              </Radio.Group>
+            </div>
           </div>
 
-          <div className="flex flex-col gap-3 border-t border-b py-4 mb-6">
-            <div className="flex justify-between items-center">
-              <span className="text-[#3D3D3D]">Subtotal</span>
-              <span className="font-medium text-[#3D3D3D]">
-                ${subtotal.toFixed(2)}
-              </span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-[#3D3D3D]">Coupon Discount</span>
-              <span className="font-medium text-[#3D3D3D]">-$0.00</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-[#3D3D3D]">Shipping</span>
-              <span className="font-medium text-[#3D3D3D]">
-                ${shipping.toFixed(2)}
-              </span>
-            </div>
-            <div className="flex justify-between items-center mt-2">
-              <span className="text-[#3D3D3D] font-bold text-[16px]">
-                Total
-              </span>
-              <span className="font-bold text-[#46A358] text-[18px]">
-                ${total.toFixed(2)}
-              </span>
+          {/* RIGHT: Order Summary */}
+          <div className="w-full lg:w-[400px] lg:sticky lg:top-8">
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+              <h2 className="text-xl font-bold text-[#3D3D3D] mb-6 border-b pb-4">
+                Order Summary
+              </h2>
+
+              <div className="space-y-4 mb-6 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar">
+                {data?.map((item: ShopCartType) => (
+                  <div key={item._id} className="flex gap-4 group">
+                    <div className="relative overflow-hidden rounded-lg bg-gray-50 border border-gray-100 shrink-0">
+                      <img
+                        src={item.main_image}
+                        alt={item.title}
+                        className="w-16 h-16 object-cover transform group-hover:scale-110 transition-transform"
+                      />
+                      <span className="absolute -top-1 -right-1 bg-[#46A358] text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-bold">
+                        {item.counter}
+                      </span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-sm font-bold text-[#3D3D3D] truncate">
+                        {item.title}
+                      </h4>
+                      <p className="text-xs text-gray-400">
+                        SKU: {item._id.slice(0, 8)}
+                      </p>
+                      <p className="text-[#46A358] font-bold text-sm mt-1">
+                        ${(item.price * item.counter).toFixed(2)}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="bg-[#F9FBFA] p-4 rounded-xl space-y-3 mb-6">
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-500">Subtotal</span>
+                  <span className="font-semibold text-gray-800">
+                    ${subtotal.toFixed(2)}
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-500">Coupon Discount</span>
+                  <span className="text-red-500 font-semibold">
+                    -${couponDiscount.toFixed(2)}
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-500">Shipping</span>
+                  <span className="font-semibold text-gray-800">
+                    ${shipping.toFixed(2)}
+                  </span>
+                </div>
+                <div className="border-t border-gray-200 pt-3 flex justify-between items-center">
+                  <span className="text-lg font-bold text-[#3D3D3D]">
+                    Total
+                  </span>
+                  <span className="text-2xl font-black text-[#46A358]">
+                    ${total.toFixed(2)}
+                  </span>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full bg-[#46A358] text-white py-4 rounded-xl font-bold text-lg hover:shadow-xl hover:bg-[#3d8d4c] transition-all active:scale-[0.98]"
+              >
+                Complete Order
+              </button>
+
+              <p className="text-center text-xs text-gray-400 mt-4 px-4">
+                By clicking "Complete Order", you agree to our terms and
+                conditions.
+              </p>
             </div>
           </div>
-        </div>
-      </form>
-      <form onSubmit={handlePlaceOrder} className="flex flex-col md:flex-row ">
-        <div className="md:hidden flex flex-col gap-2 mb-6">
-          <label className="text-[15px] text-[#3D3D3D]">
-            Enter your comment
-          </label>
-          <textarea className="border border-[#EAEAEA] rounded p-2 h-[100px] focus:outline-[#46A358]" />
-        </div>
-        <button
-          type="submit"
-          className="w-full md:hidden flex items-center justify-center cursor-pointer bg-[#46A358] text-white py-3 rounded text-[16px] font-bold hover:bg-[#357c44] transition-all"
-        >
-          Place Order
-        </button>
-      </form>
+        </form>
+      </div>
+
+      {/* SUCCESS MODAL UI ENHANCEMENT */}
+      {/* ULTRA-MODERN NEUMORPHIC SUCCESS MODAL */}
       <Modal
         open={isModalOpen}
         onCancel={() => setIsModalOpen(false)}
         footer={null}
-        width={600}
+        width={700}
         centered
-        mask={true}
-        maskStyle={{
-          backdropFilter: "none",
-          backgroundColor: "rgba(0,0,0,0.45)",
-        }}
+        className="ultra-modern-modal"
+        closeIcon={null} // Tozalik uchun yopish tugmasini olib tashladim
       >
-        <div className="flex flex-col items-center pt-6 pb-2">
-          <div className="w-[80px] h-[80px] bg-[#46A358]/20 rounded-full flex items-center justify-center mb-4">
-            <img
-              src="https://cdn-icons-png.flaticon.com/512/190/190411.png"
-              alt="success"
-              className="w-10 opacity-60"
-            />
-          </div>
-          <h2 className="text-[#727272] text-[16px] font-medium">
-            Your order has been received
-          </h2>
-        </div>
+        <div className="flex flex-col md:flex-row min-h-[500px] overflow-hidden rounded-[40px] bg-white">
+          {/* CHAP TARAF: Buyurtma holati (Visual Sidebar) */}
+          <div className="w-full md:w-[280px] bg-[#46A358] p-10 text-white flex flex-col justify-between relative overflow-hidden">
+            {/* Dekorativ aylana */}
+            <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-white/10 rounded-full"></div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 border-b pb-4 mb-4 mt-4 text-center md:text-left">
-          <div className="border-r last:border-0 md:pr-4">
-            <p className="text-[12px] text-[#727272]">Order Number</p>
-            <p className="text-[14px] font-bold text-[#3D3D3D]">19586687</p>
-          </div>
-          <div className="border-r last:border-0 md:pr-4">
-            <p className="text-[12px] text-[#727272]">Date</p>
-            <p className="text-[14px] font-bold text-[#3D3D3D]">
-              {formattedDate}
-            </p>
-          </div>
-          <div className="border-r last:border-0 md:pr-4">
-            <p className="text-[12px] text-[#727272]">Total</p>
-            <p className="text-[14px] font-bold text-[#3D3D3D]">
-              ${total.toFixed(2)}
-            </p>
-          </div>
-          <div className="">
-            <p className="text-[12px] text-[#727272]">Payment Method</p>
-            <p className="text-[14px] font-bold text-[#3D3D3D]">
-              {paymentMethod === "cash" ? "Cash on delivery" : paymentMethod}
-            </p>
-          </div>
-        </div>
-
-        <h3 className="font-bold text-[18px] text-[#3D3D3D] mb-4">
-          Order Details
-        </h3>
-
-        <div className="flex flex-col gap-3 mb-4 max-h-[250px] overflow-y-auto">
-          {data?.map((item: ShopCartType) => (
-            <div
-              key={item._id}
-              className="flex justify-between items-center bg-[#FBFBFB] p-2"
-            >
-              <div className="flex items-center gap-3">
-                <img
-                  src={item.main_image}
-                  alt={item.title}
-                  className="w-[50px] h-[50px] object-contain"
-                />
-                <div>
-                  <h4 className="font-bold text-[14px] text-[#3D3D3D]">
-                    {item.title}
-                  </h4>
-                  <p className="text-[12px] text-[#727272]">
-                    SKU: {item._id.slice(0, 8)}
-                  </p>
-                </div>
+            <div>
+              <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center mb-8 rotate-12 shadow-xl">
+                <span className="text-[#46A358] text-3xl font-black">✓</span>
               </div>
-              <div className="flex sm:flex-row flex-col gap-2 sm:gap-10">
-                <span className="text-[#727272]">(x{item.counter})</span>
-                <span className="font-bold text-[#46A358]">
-                  ${(item.price * item.counter).toFixed(2)}
-                </span>
+              <h2 className="text-3xl font-black leading-tight mb-4">
+                Great! <br /> Your order is on the way.
+              </h2>
+              <p className="text-white/80 text-sm">
+                We've sent a confirmation to your email address.
+              </p>
+            </div>
+
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20">
+              <p className="text-[11px] uppercase tracking-widest opacity-70 mb-1">
+                Estimated Delivery
+              </p>
+              <p className="text-lg font-bold">Feb 02 - Feb 05</p>
+            </div>
+          </div>
+
+          {/* O'NG TARAF: Chek va Mahsulotlar */}
+          <div className="flex-1 p-8 md:p-12 bg-[#FBFBFB] flex flex-col">
+            <div className="flex justify-between items-start mb-10">
+              <div>
+                <h3 className="text-2xl font-black text-[#3D3D3D]">Summary</h3>
+                <p className="text-gray-400 text-xs mt-1 italic">
+                  Order ID: #PS-{(Math.random() * 1000).toFixed(0)}998
+                </p>
+              </div>
+              <div className="text-right">
+                <p className="text-xs text-gray-400 uppercase font-bold tracking-tighter">
+                  Total Paid
+                </p>
+                <p className="text-3xl font-black text-[#46A358]">
+                  ${total.toFixed(2)}
+                </p>
               </div>
             </div>
-          ))}
-        </div>
 
-        <div className="border-t pt-4">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-[#3D3D3D]">Shipping</span>
-            <span className="font-medium text-[#3D3D3D]">
-              ${shipping.toFixed(2)}
-            </span>
+            {/* Mahsulotlar - Horizontal Scroll yoki List */}
+            <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar mb-8">
+              <div className="grid gap-4">
+                {data?.map((item: ShopCartType) => (
+                  <div
+                    key={item._id}
+                    className="flex items-center gap-4 bg-white p-3 rounded-2xl border border-gray-100/50 hover:shadow-md transition-all group"
+                  >
+                    <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0">
+                      <img
+                        src={item.main_image}
+                        alt=""
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-bold text-[#3D3D3D] text-[13px] truncate">
+                        {item.title}
+                      </h4>
+                      <div className="flex justify-between items-center mt-1">
+                        <span className="text-[11px] bg-gray-100 px-2 py-0.5 rounded text-gray-500 font-bold">
+                          QTY: {item.counter}
+                        </span>
+                        <span className="font-black text-[#3D3D3D] text-[14px]">
+                          ${(item.price * item.counter).toFixed(2)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Action Area */}
+            <div className="mt-auto pt-6 border-t border-gray-200/60">
+              <div className="flex justify-between items-center mb-6 px-2">
+                <div className="text-[12px] text-gray-400">
+                  Payment:{" "}
+                  <span className="text-[#3D3D3D] font-bold capitalize">
+                    {paymentMethod}
+                  </span>
+                </div>
+                <div className="text-[12px] text-gray-400">
+                  Shipping:{" "}
+                  <span className="text-[#3D3D3D] font-bold">
+                    ${shipping.toFixed(2)}
+                  </span>
+                </div>
+              </div>
+
+              {/* Bosilganda yo'naltiradigan tugma */}
+              <button
+                onClick={() => {
+                  setIsModalOpen(false);
+                  navigate("/ProfilePage"); // O'zingizga kerakli sahifaga o'zgartiring
+                }}
+                className="w-full bg-[#3D3D3D] hover:bg-[#46A358] text-white h-[60px] rounded-2xl font-black text-[16px] transition-all duration-300 shadow-2xl hover:shadow-[#46A358]/40 flex items-center justify-center gap-4 group"
+              >
+                CONTINUE TO PROFILE
+                <span className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center group-hover:translate-x-2 transition-transform">
+                  →
+                </span>
+              </button>
+            </div>
           </div>
-          <div className="flex justify-between items-center mb-4">
-            <span className="text-[#3D3D3D] font-bold">Total</span>
-            <span className="font-bold text-[#46A358] text-[18px]">
-              ${total.toFixed(2)}
-            </span>
-          </div>
-        </div>
-
-        <p className="text-center text-[13px] text-[#727272] mb-6">
-          Your order is currently being processed. You will receive an order
-          confirmation email shortly with the expected delivery date for your
-          items.
-        </p>
-
-        <div className="flex justify-center">
-          <button
-            onClick={() => navigate("/")}
-            className="bg-[#46A358] cursor-pointer text-white font-bold py-3 px-10 rounded-full hover:bg-[#357c44] transition-all"
-          >
-            Track your order
-          </button>
         </div>
       </Modal>
+
+      <style>{`
+  .ultra-modern-modal .ant-modal-content {
+    padding: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+  .custom-scrollbar::-webkit-scrollbar { width: 3px; }
+  .custom-scrollbar::-webkit-scrollbar-thumb { background: #E2E2E2; border-radius: 10px; }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #46A358; }
+`}</style>
     </div>
   );
 };

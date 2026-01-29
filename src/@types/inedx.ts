@@ -109,3 +109,9 @@ export interface BlogType {
   reaction_length: number;
   views?: number;
 }
+export interface getCouponType {
+  code: number;
+  discount_for: number;
+  id: number;
+  title: number;
+}

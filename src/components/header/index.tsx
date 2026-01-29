@@ -79,7 +79,7 @@ const Header = () => {
           {token ? (
             <div className="flex items-center gap-3">
               <Button
-                onClick={() => navigate("/profile")}
+                onClick={() => navigate("/ProfilePage")}
                 className="font-semibold text-[white]! p-2.5! pl-4! !pr-4 rounded-[5px] bg-[#46A358]! hover:underline"
               >
                 {user?.name || user?.email || "Profile"}

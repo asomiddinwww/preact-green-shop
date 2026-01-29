@@ -3,6 +3,7 @@ import type { ShopCardType } from "../@types/inedx";
 
 interface InitialStateType {
   data: ShopCardType[];
+  coupon: number;
   wishlist: ShopCardType[];
 }
 
@@ -17,14 +18,14 @@ const getStoredData = (key: string): ShopCardType[] => {
 
 const initialState: InitialStateType = {
   data: getStoredData("shop"),
-  wishlist: getStoredData("wishlist"), // Wishlist yuklanmoqda
+  wishlist: getStoredData("wishlist"),
+  coupon: 0,
 };
 
 const shopSlice = createSlice({
   name: "shop-slice",
   initialState,
   reducers: {
-    // --- SAVATCHA MANTIQI ---
     getData(state, { payload }: PayloadAction<ShopCardType>) {
       const exists = state.data.find((value) => value._id === payload._id);
       if (exists) {
@@ -45,20 +46,16 @@ const shopSlice = createSlice({
       localStorage.setItem("shop", JSON.stringify(current(state).data));
     },
 
-    // --- LIKE (WISHLIST) MANTIQI ---
     toggleWishlist(state, { payload }: PayloadAction<ShopCardType>) {
       const exists = state.wishlist.find((item) => item._id === payload._id);
 
       if (exists) {
-        // Agar allaqachon bo'lsa - o'chirib tashlaymiz
         state.wishlist = state.wishlist.filter(
           (item) => item._id !== payload._id,
         );
       } else {
-        // Agar yo'q bo'lsa - qo'shamiz
         state.wishlist.push(payload);
       }
-      // LocalStorage ga saqlash
       localStorage.setItem("wishlist", JSON.stringify(current(state).wishlist));
     },
 
@@ -67,7 +64,6 @@ const shopSlice = createSlice({
       localStorage.setItem("wishlist", JSON.stringify(current(state).wishlist));
     },
 
-    // --- INCREMENT / DECREMENT ---
     increment(state, { payload }) {
       state.data = state.data.map((value) => {
         if (value._id === payload) {
@@ -89,6 +85,9 @@ const shopSlice = createSlice({
       }
       localStorage.setItem("shop", JSON.stringify(current(state).data));
     },
+    getCoupon(state, { payload }) {
+      state.coupon = payload;
+    },
   },
 });
 
@@ -99,6 +98,7 @@ export const {
   decrement,
   toggleWishlist,
   removeFromWishlist,
+  getCoupon,
 } = shopSlice.actions;
 
 export default shopSlice.reducer;
