@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useReduxSelector } from "../../../../hooks/useRedux";
 import toast, { Toaster } from "react-hot-toast";
 

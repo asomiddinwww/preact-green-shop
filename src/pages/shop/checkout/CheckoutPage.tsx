@@ -1,13 +1,8 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { Modal, Radio, message, Tooltip } from "antd";
+import { Modal, Radio, message } from "antd";
 import { useNavigate } from "react-router-dom";
-import {
-  CreditCardOutlined,
-  CarOutlined,
-  BankOutlined,
-  InfoCircleOutlined,
-} from "@ant-design/icons";
+import { CarOutlined, BankOutlined } from "@ant-design/icons";
 import type { ShopCartType } from "../../../@types/inedx";
 
 const CheckoutPage = () => {
@@ -75,7 +70,6 @@ const CheckoutPage = () => {
   return (
     <div className="bg-[#F9FBFA] min-h-screen py-12">
       <div className="w-[92%] max-w-[1250px] m-auto">
-        {/* Breadcrumb or Title Area */}
         <div className="mb-10">
           <h1 className="text-3xl font-extrabold text-[#3D3D3D]">Checkout</h1>
           <p className="text-gray-500 mt-1">
@@ -87,7 +81,6 @@ const CheckoutPage = () => {
           onSubmit={handlePlaceOrder}
           className="flex flex-col lg:flex-row gap-10 items-start"
         >
-          {/* LEFT: Billing Details */}
           <div className="flex-1 bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
             <div className="flex items-center gap-3 mb-8 pb-4 border-b border-gray-50">
               <div className="w-8 h-8 bg-[#46A358] text-white rounded-full flex items-center justify-center font-bold">
@@ -219,7 +212,6 @@ const CheckoutPage = () => {
               </div>
             </div>
 
-            {/* Payment Method Section */}
             <div className="mt-12">
               <div className="flex items-center gap-3 mb-6 pb-4 border-b border-gray-50">
                 <div className="w-8 h-8 bg-[#46A358] text-white rounded-full flex items-center justify-center font-bold">

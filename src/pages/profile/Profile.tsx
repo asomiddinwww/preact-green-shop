@@ -84,7 +84,6 @@ const ProfilePage: React.FC = () => {
         </div>
       </div>
 
-      {/* MAIN CONTENT - ACCOUNT DETAILS */}
       <div className="flex-1">
         <h2 className="text-[17px] font-bold text-[#3D3D3D] mb-8 border-b border-[#46A358]/20 pb-2">
           Personal Information
