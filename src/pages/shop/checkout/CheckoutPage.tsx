@@ -2,8 +2,7 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { Modal, Radio, message } from "antd";
 import { useNavigate } from "react-router-dom";
-import type { ShopCardType } from "../../../../../7-oy-6-dars-master/src/@types/inedx";
-import type { ShopCartType } from "../../../@types/inedx";
+import type { ShopCardType, ShopCartType } from "../../../@types/inedx";
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
