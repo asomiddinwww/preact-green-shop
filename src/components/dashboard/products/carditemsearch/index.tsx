@@ -1,175 +1,228 @@
-import { useParams, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import {
-  Heart,
-  Facebook,
-  Twitter,
-  Linkedin,
-  Mail,
-  Minus,
-  Plus,
-  Star,
-} from "lucide-react";
+import { useParams, useNavigate } from "react-router-dom";
+import { Image, Rate } from "antd";
+import { HeartOutlined } from "@ant-design/icons";
+import { loaderApi } from "../../../../generic/loader";
+import type { ProductType, QueryType } from "../../../../@types/inedx";
 import { useQueryHandler } from "../../../../hooks/useQuery";
 
-const ProductDetail = () => {
-  const { id } = useParams();
+const ProductPage = () => {
+  const { category, id } = useParams();
   const navigate = useNavigate();
-  const [count, setCount] = useState(1);
+  const { cateGoryLoader } = loaderApi();
 
-  const { data, isLoading, isError } = useQueryHandler({
-    url: `flower/get/${id}`,
-    pathname: `product-${id}`,
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedSize, setSelectedSize] = useState<string>("S");
+
+  const {
+    data: product,
+    isLoading,
+    isError,
+  }: QueryType<ProductType> = useQueryHandler({
+    url: `flower/category/${category}/${id}`,
+    pathname: `product-details-${id}`,
   });
 
-  const product = data?.data;
-
   if (isLoading)
+    return <div className="flex justify-center mt-20">{cateGoryLoader()}</div>;
+
+  if (isError || !product)
     return (
-      <div className="p-20 text-center text-[#46A358] font-bold">
-        Yuklanmoqda...
+      <div className="text-center mt-20 text-red-500 font-bold text-xl">
+        Product not found!
       </div>
     );
-  if (isError)
-    return (
-      <div className="p-20 text-center text-red-500">Xatolik yuz berdi!</div>
-    );
+
+  const images = product.detailed_images?.length
+    ? product.detailed_images
+    : [product.main_image];
+
+  const currentImage = selectedImage || product.main_image;
 
   return (
-    <div className="max-w-[1200px] mx-auto p-5 text-left">
-      <nav className="mb-10 text-sm text-[#3D3D3D]">
+    <div className="w-[90%] max-w-[1550px] m-auto mt-10 mb-20">
+      <div className="mb-10 text-sm">
         <span
-          className="cursor-pointer font-bold"
           onClick={() => navigate("/")}
+          className="font-bold cursor-pointer hover:text-[#46A358]"
         >
           Home
         </span>{" "}
-        / Shop
-      </nav>
+        /{" "}
+        <span className="ml-1 text-[#46A358] font-medium">{product.title}</span>
+      </div>
 
       <div className="flex flex-col md:flex-row gap-12">
-        <div className="w-full md:w-1/2 flex gap-4">
-          <div className="flex flex-col gap-4">
-            <div className="w-20 h-20 bg-[#FBFBFB] border border-[#46A358] rounded p-2 cursor-pointer">
-              <img
-                src={product?.main_image}
-                className="w-full h-full object-contain mix-blend-multiply"
-                alt="thumb"
+        <div className="flex flex-1 gap-4 h-[450px] items-start">
+          <div className="flex flex-col gap-4 w-[20%] h-full overflow-y-auto custom-scroll pr-1">
+            {images.map((img, idx) => (
+              <div
+                key={idx}
+                onClick={() => setSelectedImage(img)}
+                className={`
+                  w-full aspect-square p-2 bg-[#fbfbfb] cursor-pointer 
+                  border transition-all duration-300 flex justify-center items-center rounded-md
+                  ${
+                    currentImage === img
+                      ? "border-[#46A358]"
+                      : "border-transparent hover:border-[#46A358]"
+                  }
+                `}
+              >
+                <img
+                  src={img}
+                  alt={`thumb-${idx}`}
+                  className="w-full h-full object-contain"
+                />
+              </div>
+            ))}
+          </div>
+
+          <div className="w-[80%] h-full flex justify-center items-center bg-[#fbfbfb] rounded-lg overflow-hidden border border-gray-100 relative group">
+            <div className="w-full h-full p-6 transition-transform duration-500 hover:scale-110 cursor-zoom-in flex items-center justify-center">
+              <Image
+                src={currentImage}
+                alt={product.title}
+                className="object-contain max-h-full max-w-full"
+                preview={{
+                  mask: (
+                    <div className="text-white text-sm font-medium">
+                      Zoom Image
+                    </div>
+                  ),
+                }}
               />
             </div>
-          </div>
-          <div className="flex-1 bg-[#FBFBFB] rounded-lg p-10 flex items-center justify-center relative">
-            <img
-              src={product?.main_image}
-              className="w-full max-h-[400px] object-contain mix-blend-multiply"
-              alt={product?.title}
-            />
+
+            <div className="absolute top-4 right-4 bg-white p-2 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </div>
           </div>
         </div>
 
-        <div className="w-full md:w-1/2">
-          <h1 className="text-3xl font-bold text-[#3D3D3D] mb-2">
-            {product?.title}
+        <div className="flex-1">
+          <h1 className="text-[28px] font-bold text-[#3D3D3D]">
+            {product.title}
           </h1>
-          <div className="flex justify-between items-center border-b pb-4 mb-4">
-            <span className="text-2xl font-bold text-[#46A358]">
-              ${product?.price}.00
+
+          <div className="flex items-center justify-between border-b border-[#46A358]/20 pb-4 mt-4">
+            <span className="text-[#46A358] text-[22px] font-bold">
+              ${product.price}
             </span>
-            <div className="flex items-center gap-2">
-              <div className="flex text-yellow-400">
-                {[...Array(4)].map((_, i) => (
-                  <Star key={i} size={16} fill="currentColor" />
-                ))}
-                <Star size={16} className="text-gray-300" />
-              </div>
-              <span className="text-[#3D3D3D] text-sm">19 Customer Review</span>
+            <div className="flex flex-col items-center gap-2">
+              <Rate
+                disabled
+                allowHalf
+                defaultValue={product.rate}
+                className="text-[#FFAC0C] text-sm"
+              />
+              <span className="text-[13px] text-[#3D3D3D]">
+                ({product.views} Customer Reviews)
+              </span>
             </div>
           </div>
 
-          <div className="mb-6">
-            <h4 className="font-bold text-[#3D3D3D] text-sm mb-2">
+          <div className="mt-6">
+            <h3 className="font-medium text-[#3D3D3D] text-[15px]">
               Short Description:
-            </h4>
-            <p className="text-[#727272] text-sm leading-7">
-              {product?.short_description ||
-                "Mahsulot haqida ma'lumot kiritilmagan."}
+            </h3>
+            <p className="text-[#727272] text-[14px] leading-6 mt-2">
+              {product.short_description || "No description available."}
             </p>
           </div>
 
-          <div className="flex items-center gap-4 mb-8">
-            <div className="flex items-center gap-4 bg-[#FBFBFB] px-3 py-1 rounded-full border border-gray-100">
-              <button
-                onClick={() => setCount((prev) => Math.max(1, prev - 1))}
-                className="w-8 h-8 bg-[#46A358] text-white rounded-full flex items-center justify-center hover:bg-[#3d8b4c]"
-              >
-                <Minus size={16} />
-              </button>
-              <span className="font-bold text-lg w-4 text-center">{count}</span>
-              <button
-                onClick={() => setCount((prev) => prev + 1)}
-                className="w-8 h-8 bg-[#46A358] text-white rounded-full flex items-center justify-center hover:bg-[#3d8b4c]"
-              >
-                <Plus size={16} />
-              </button>
+          <div className="mt-6">
+            <h3 className="font-medium text-[#3D3D3D] text-[15px]">Size:</h3>
+            <div className="flex gap-3 mt-2">
+              {["S", "M", "L", "XL"].map((size) => (
+                <div
+                  key={size}
+                  onClick={() => setSelectedSize(size)}
+                  className={`
+                    w-9 h-9 rounded-full flex items-center justify-center border cursor-pointer text-[14px] font-bold transition-all
+                    ${
+                      selectedSize === size
+                        ? "border-[#46A358] text-[#46A358]"
+                        : "border-[#EAEAEA] text-[#727272] hover:border-[#46A358]"
+                    }
+                  `}
+                >
+                  {size}
+                </div>
+              ))}
             </div>
+          </div>
 
-            <button className="bg-[#46A358] text-white px-6 py-2 rounded-md font-bold text-sm hover:bg-[#3d8b4c] transition-colors">
-              BUY NOW
+          <div className="flex flex-wrap items-center gap-4 mt-8">
+            <button className="bg-[#46A358] w-[160px] cursor-pointer text-white px-8 py-3 rounded-[6px] font-bold hover:bg-[#357a40] transition-colors uppercase text-sm">
+              Buy Now
             </button>
-            <button className="border border-[#46A358] text-[#46A358] px-6 py-2 rounded-md font-bold text-sm hover:bg-[#46A358] hover:text-white transition-all">
-              ADD TO CART
+
+            <button className="border w-[160px] cursor-pointer border-[#46A358] text-[#46A358] px-8 py-3 rounded-[6px] font-bold hover:bg-[#46A358] hover:text-white transition-colors uppercase text-sm">
+              Add to Cart
             </button>
-            <button className="border border-[#46A358] p-2 rounded-md text-[#46A358] hover:bg-[#46A358] hover:text-white transition-all">
-              <Heart size={20} />
+
+            <button className="w-11 h-11 cursor-pointer border border-[#EAEAEA] rounded-[6px] flex items-center justify-center text-[#3D3D3D] hover:text-[#46A358] hover:border-[#46A358] transition-all">
+              <HeartOutlined style={{ fontSize: "20px" }} />
             </button>
           </div>
 
-          <div className="text-sm space-y-2 border-t pt-4">
+          <div className="mt-8 text-[15px] text-[#727272] flex flex-col gap-2.5">
             <p>
-              <span className="text-[#A5A5A5]">SKU:</span>{" "}
-              <span className="text-[#727272]">
-                {product?._id?.slice(0, 10)}
-              </span>
+              <span className="text-[#A5A5A5]">SKU:</span> {product._id}
             </p>
             <p>
               <span className="text-[#A5A5A5]">Category:</span>{" "}
-              <span className="text-[#727272]">
-                {product?.category || "Potter Plants"}
-              </span>
+              <span className="capitalize">{product.category}</span>
             </p>
             <p>
               <span className="text-[#A5A5A5]">Tags:</span>{" "}
-              <span className="text-[#727272]">Home, Garden, Plants</span>
+              {product.tags.length > 0
+                ? product.tags.join(", ")
+                : "Home, Garden, Plants"}
             </p>
+          </div>
 
-            <div className="flex items-center gap-4 pt-4">
-              <span className="font-bold text-[#3D3D3D]">
-                Share this products:
-              </span>
-              <div className="flex gap-4">
-                <Facebook
-                  size={16}
-                  className="cursor-pointer hover:text-[#46A358]"
-                />
-                <Twitter
-                  size={16}
-                  className="cursor-pointer hover:text-[#46A358]"
-                />
-                <Linkedin
-                  size={16}
-                  className="cursor-pointer hover:text-[#46A358]"
-                />
-                <Mail
-                  size={16}
-                  className="cursor-pointer hover:text-[#46A358]"
-                />
-              </div>
+          <div className="mt-6 flex gap-4 items-center text-[#3D3D3D]">
+            <span className="font-medium text-[15px]">Share this product:</span>
+            <div className="flex gap-4 text-lg">
+              <i className="fa-brands fa-facebook-f hover:text-[#46A358] cursor-pointer transition-colors"></i>
+              <i className="fa-brands fa-twitter hover:text-[#46A358] cursor-pointer transition-colors"></i>
+              <i className="fa-brands fa-linkedin-in hover:text-[#46A358] cursor-pointer transition-colors"></i>
+              <i className="fa-regular fa-envelope hover:text-[#46A358] cursor-pointer transition-colors"></i>
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="mt-20">
+        <div className="border-b-2 border-[#46A358] mb-6">
+          <h3 className="text-[#46A358] font-bold text-[17px] cursor-pointer pb-4 inline-block">
+            Product Description
+          </h3>
+        </div>
+
+        <div
+          className="text-[#727272] leading-7 text-sm md:text-base"
+          dangerouslySetInnerHTML={{
+            __html: product.description || "No detailed description available.",
+          }}
+        />
       </div>
     </div>
   );
 };
 
-export default ProductDetail;
+export default ProductPage;

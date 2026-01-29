@@ -1,8 +1,8 @@
 import { DeleteFilled } from "@ant-design/icons";
 import type { FC } from "react";
-import type { ShopCardType } from "../../../@types/inedx";
 import { useReduxDispatch } from "../../../hooks/useRedux";
 import { decrement, deleteData, increment } from "../../../redux/shop-slice";
+import type { ShopCardType } from "../../../@types/inedx";
 
 const Card: FC<ShopCardType> = (props) => {
   const { main_image, title, _id, price, counter, userPrice } = props;

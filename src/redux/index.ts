@@ -4,12 +4,14 @@ import modalSlice from "./modal-store";
 
 import userSlice from "./user-slice";
 import shopSlice from "./shop-slice";
+import authSlice from "./auth-slice";
 
 export const store = configureStore({
   reducer: {
     modalSlice,
     shopSlice,
     userSlice,
+    authSlice,
   },
 });
 

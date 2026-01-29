@@ -1,14 +1,12 @@
-import SkeletonInput from "antd/es/skeleton/Input";
+import { Skeleton } from "antd";
 
-const LoaderApi = () => {
-  const categoryLoader = () => {
+const loaderApi = () => {
+  const cateGoryLoader = () => {
     return Array.from({ length: 9 }).map((_, index) => (
-      <div key={index}>
-        <SkeletonInput key={index} active className="pb-1" block />
-      </div>
+      <Skeleton.Input key={index} block />
     ));
   };
-  return { categoryLoader };
+  return { cateGoryLoader };
 };
 
-export { LoaderApi };
+export { loaderApi };

@@ -1,153 +1,228 @@
 import { useState } from "react";
-import { useParams } from "react-router-dom";
-import { useReduxDispatch, useReduxSelector } from "../../../hooks/useRedux";
-import { getData, toggleWishlist } from "../../../redux/shop-slice"; // toggleWishlist qo'shildi
-import { useAxios } from "../../../hooks/useAxios"; // Axios hookni import qiling
-import { useQuery } from "@tanstack/react-query";
-import { Heart, Minus, Plus, Loader } from "lucide-react";
+import { useParams, useNavigate } from "react-router-dom";
+import { Image, Rate } from "antd";
+import { HeartOutlined } from "@ant-design/icons";
+import { loaderApi } from "../../../generic/loader";
+import type { ProductType, QueryType } from "../../../@types/inedx";
+import { useQueryHandler } from "../../../hooks/useQuery/indexx";
 
-const ProductDetails = () => {
-  const dispatch = useReduxDispatch();
-  const axios = useAxios();
-  const [count, setCount] = useState(1);
-  const [activeImg, setActiveImg] = useState("");
-  const { id } = useParams();
+const ProductPage = () => {
+  const { category, id } = useParams();
+  const navigate = useNavigate();
+  const { cateGoryLoader } = loaderApi();
 
-  const { data: product, isLoading } = useQuery({
-    queryKey: ["product", id],
-    queryFn: () => {
-      if (!id) throw new Error("Product ID is missing");
-      return axios({ url: `plant-list/${id}` }).then((res) => res.data.data);
-    },
-    enabled: !!id,
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedSize, setSelectedSize] = useState<string>("S");
+
+  const {
+    data: product,
+    isLoading,
+    isError,
+  }: QueryType<ProductType> = useQueryHandler({
+    url: `flower/category/${category}/${id}`,
+    pathname: `product-details-${id}`,
   });
 
-  const { wishlist } = useReduxSelector((state) => state.shopSlice);
-  const isLiked = wishlist?.some((item) => item._id === product?._id);
-
-  if (product && !activeImg) setActiveImg(product.main_image);
-
   if (isLoading)
+    return <div className="flex justify-center mt-20">{cateGoryLoader()}</div>;
+
+  if (isError || !product)
     return (
-      <div className="py-20 text-center">
-        <Loader className="animate-spin inline-block text-[#46A358]" />
+      <div className="text-center mt-20 text-amber-200 font-bold text-9xl">
+        Produck topilmadi
       </div>
     );
-  if (!product)
-    return <div className="py-20 text-center">Mahsulot topilmadi</div>;
+
+  const images = product.detailed_images?.length
+    ? product.detailed_images
+    : [product.main_image];
+
+  const currentImage = selectedImage || product.main_image;
 
   return (
-    <div className="w-[90%] m-auto py-10 font-sans">
-      <div className="flex flex-col lg:flex-row gap-12">
-        <div className="flex gap-4 lg:w-1/2">
-          <div className="flex flex-col gap-4">
-            {product.images?.map((img: string, idx: number) => (
+    <div className="w-[90%] max-w-[1550px] m-auto mt-10 mb-20">
+      <div className="mb-10 text-sm">
+        <span
+          onClick={() => navigate("/")}
+          className="font-bold cursor-pointer hover:text-[#46A358]"
+        >
+          Home
+        </span>{" "}
+        /{" "}
+        <span className="ml-1 text-[#46A358] font-medium">{product.title}</span>
+      </div>
+
+      <div className="flex flex-col md:flex-row gap-12">
+        <div className="flex flex-1 gap-4 h-[450px] items-start">
+          <div className="flex flex-col gap-4 w-[20%] h-full overflow-y-auto custom-scroll pr-1">
+            {images.map((img, idx) => (
               <div
                 key={idx}
-                onClick={() => setActiveImg(img)}
-                className={`w-[100px] h-[100px] cursor-pointer border-2 rounded-lg p-2 bg-[#FBFBFB] transition-all ${
-                  activeImg === img ? "border-[#46A358]" : "border-transparent"
-                }`}
+                onClick={() => setSelectedImage(img)}
+                className={`
+                  w-full aspect-square p-2 bg-[#fbfbfb] cursor-pointer 
+                  border transition-all duration-300 flex justify-center items-center rounded-md
+                  ${
+                    currentImage === img
+                      ? "border-[#46A358]"
+                      : "border-transparent hover:border-[#46A358]"
+                  }
+                `}
               >
                 <img
                   src={img}
+                  alt={`thumb-${idx}`}
                   className="w-full h-full object-contain"
-                  alt="preview"
                 />
               </div>
             ))}
           </div>
-          <div className="flex-1 bg-[#FBFBFB] rounded-lg p-10 flex justify-center items-center border border-[#EAEAEA]">
-            <img
-              src={activeImg || product.main_image}
-              className="w-full max-h-[400px] object-contain"
-              alt="main"
-            />
+
+          <div className="w-[80%] h-full flex justify-center items-center bg-[#fbfbfb] rounded-lg overflow-hidden border border-gray-100 relative group">
+            <div className="w-full h-full p-6 transition-transform duration-500 hover:scale-110 cursor-zoom-in flex items-center justify-center">
+              <Image
+                src={currentImage}
+                alt={product.title}
+                className="object-contain max-h-full max-w-full"
+                preview={{
+                  mask: (
+                    <div className="text-white text-sm font-medium">
+                      Zoom Image
+                    </div>
+                  ),
+                }}
+              />
+            </div>
+
+            <div className="absolute top-4 right-4 bg-white p-2 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </div>
           </div>
         </div>
 
-        <div className="lg:w-1/2 text-left">
-          <h1 className="text-[30px] font-bold text-[#3D3D3D]">
+        <div className="flex-1">
+          <h1 className="text-[28px] font-bold text-[#3D3D3D]">
             {product.title}
           </h1>
 
-          <div className="flex justify-between items-center border-b pb-4 mt-3">
-            <span className="text-[#46A358] text-[24px] font-bold">
-              ${(product.discount_price || product.price).toFixed(2)}
+          <div className="flex items-center justify-between border-b border-[#46A358]/20 pb-4 mt-4">
+            <span className="text-[#46A358] text-[22px] font-bold">
+              ${product.price}
             </span>
-            <div className="flex items-center gap-1 text-[#FFAC0C]">
-              <span>★★★★☆</span>
-              <span className="text-[#3D3D3D] text-[14px] ml-2 font-medium">
-                19 Customer Review
-                <div></div>
+            <div className="flex flex-col items-center gap-2">
+              <Rate
+                disabled
+                allowHalf
+                defaultValue={product.rate}
+                className="text-[#FFAC0C] text-sm"
+              />
+              <span className="text-[13px] text-[#3D3D3D]">
+                ({product.views} Customer Reviews)
               </span>
             </div>
           </div>
 
-          <div className="mt-5">
-            <h4 className="font-bold text-[#3D3D3D]">Short Description:</h4>
-            <p className="text-[#727272] text-[14px] mt-2 leading-7">
-              {product.short_description || product.description}
+          <div className="mt-6">
+            <h3 className="font-medium text-[#3D3D3D] text-[15px]">
+              Short Description:
+            </h3>
+            <p className="text-[#727272] text-[14px] leading-6 mt-2">
+              {product.short_description || "No description available."}
             </p>
           </div>
 
-          <div className="flex items-center gap-6 mt-8">
-            <div className="flex items-center gap-4">
-              <button
-                onClick={() => count > 1 && setCount(count - 1)}
-                className="w-9 h-9 bg-[#46A358] text-white rounded-full flex items-center justify-center hover:bg-[#3d8b4c] transition-colors"
-              >
-                <Minus size={18} />
-              </button>
-              <span className="text-xl font-bold w-6 text-center">{count}</span>
-              <button
-                onClick={() => setCount(count + 1)}
-                className="w-9 h-9 bg-[#46A358] text-white rounded-full flex items-center justify-center hover:bg-[#3d8b4c] transition-colors"
-              >
-                <Plus size={18} />
-              </button>
+          <div className="mt-6">
+            <h3 className="font-medium text-[#3D3D3D] text-[15px]">Size:</h3>
+            <div className="flex gap-3 mt-2">
+              {["S", "M", "L", "XL"].map((size) => (
+                <div
+                  key={size}
+                  onClick={() => setSelectedSize(size)}
+                  className={`
+                    w-9 h-9 rounded-full flex items-center justify-center border cursor-pointer text-[14px] font-bold transition-all
+                    ${
+                      selectedSize === size
+                        ? "border-[#46A358] text-[#46A358]"
+                        : "border-[#EAEAEA] text-[#727272] hover:border-[#46A358]"
+                    }
+                  `}
+                >
+                  {size}
+                </div>
+              ))}
             </div>
+          </div>
 
-            <button className="bg-[#46A358] text-white px-10 py-3 rounded-md font-bold uppercase text-sm shadow-sm hover:opacity-90 transition-opacity">
+          <div className="flex flex-wrap items-center gap-4 mt-8">
+            <button className="bg-[#46A358] w-[160px] cursor-pointer text-white px-8 py-3 rounded-[6px] font-bold hover:bg-[#357a40] transition-colors uppercase text-sm">
               Buy Now
             </button>
 
-            <button
-              onClick={() => dispatch(getData({ ...product, counter: count }))}
-              className="border border-[#46A358] text-[#46A358] px-8 py-3 rounded-md font-bold uppercase text-sm hover:bg-[#46A358] hover:text-white transition-all"
-            >
+            <button className="border w-[160px] cursor-pointer border-[#46A358] text-[#46A358] px-8 py-3 rounded-[6px] font-bold hover:bg-[#46A358] hover:text-white transition-colors uppercase text-sm">
               Add to Cart
             </button>
 
-            <button
-              onClick={() => dispatch(toggleWishlist(product))}
-              className={`border border-[#46A358] p-3 rounded-md transition-all ${isLiked ? "bg-[#46A358] text-white" : "text-[#46A358]"}`}
-            >
-              <Heart size={20} fill={isLiked ? "white" : "none"} />
+            <button className="w-11 h-11 cursor-pointer border border-[#EAEAEA] rounded-[6px] flex items-center justify-center text-[#3D3D3D] hover:text-[#46A358] hover:border-[#46A358] transition-all">
+              <HeartOutlined style={{ fontSize: "20px" }} />
             </button>
           </div>
 
-          <div className="mt-10 flex flex-col gap-3 text-[15px] border-t pt-6">
+          <div className="mt-8 text-[15px] text-[#727272] flex flex-col gap-2.5">
             <p>
-              <span className="text-[#A5A5A5] font-medium">SKU:</span>{" "}
-              <span className="text-[#727272]">{product.sku}</span>
+              <span className="text-[#A5A5A5]">SKU:</span> {product._id}
             </p>
             <p>
-              <span className="text-[#A5A5A5] font-medium">Categories:</span>{" "}
-              <span className="text-[#727272]">
-                {product.categories || product.category}
-              </span>
+              <span className="text-[#A5A5A5]">Category:</span>{" "}
+              <span className="capitalize">{product.category}</span>
             </p>
-            d\
             <p>
-              <span className="text-[#A5A5A5] font-medium">Tags:</span>{" "}
-              <span className="text-[#727272]">{product.tags}</span>
+              <span className="text-[#A5A5A5]">Tags:</span>{" "}
+              {product.tags.length > 0
+                ? product.tags.join(", ")
+                : "Home, Garden, Plants"}
             </p>
           </div>
+
+          <div className="mt-6 flex gap-4 items-center text-[#3D3D3D]">
+            <span className="font-medium text-[15px]">Share this product:</span>
+            <div className="flex gap-4 text-lg">
+              <i className="fa-brands fa-facebook-f hover:text-[#46A358] cursor-pointer transition-colors"></i>
+              <i className="fa-brands fa-twitter hover:text-[#46A358] cursor-pointer transition-colors"></i>
+              <i className="fa-brands fa-linkedin-in hover:text-[#46A358] cursor-pointer transition-colors"></i>
+              <i className="fa-regular fa-envelope hover:text-[#46A358] cursor-pointer transition-colors"></i>
+            </div>
+          </div>
         </div>
+      </div>
+
+      <div className="mt-20">
+        <div className="border-b-2 border-[#46A358] mb-6">
+          <h3 className="text-[#46A358] font-bold text-[17px] cursor-pointer pb-4 inline-block">
+            Product Description
+          </h3>
+        </div>
+
+        <div
+          className="text-[#727272] leading-7 text-sm md:text-base"
+          dangerouslySetInnerHTML={{
+            __html: product.description || "No detailed description available.",
+          }}
+        />
       </div>
     </div>
   );
 };
 
-export default ProductDetails;
+export default ProductPage;

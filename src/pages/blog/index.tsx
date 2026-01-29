@@ -4,39 +4,39 @@ import { useReduxDispatch, useReduxSelector } from "../../hooks/useRedux";
 
 const Blog = () => {
   const dispatch = useReduxDispatch();
-
   const { user } = useReduxSelector((state) => state.userSlice);
 
-  if (user) {
-    return null;
-  }
   return (
     <div className="w-full pt-13">
       <div className="w-[90%] m-auto flex flex-col justify-center items-center gap-[20px]">
-        <div className="w-full flex items-center justify-center">
-          <img
-            className="w-full rounded-2xl"
-            src={blogimg}
-            alt="GreenShop Blog"
-          />
-        </div>
-        <div className="text-center flex items-center justify-center flex-col gap-4">
-          <h1 className="font-bold text-center text-6xl leading-[130%] max-[730px]:text-4xl max-[430px]:text-2xl">
-            Monetize your content <br /> with
-            <span className="text-[#46A358]"> GreenShop</span>
-          </h1>
-          <p className="text-center w-[91%] leading-[140%] text-[#3d3d3d] font-medium max-[730px]:w-[100%] max-[730px]:font-normal max-[730px]:text-[14px]">
-            GreenShop - a platform for buying and selling, publishing and
-            monetizing all types of flowers: articles, notes, video, photos,
-            podcasts or songs.
-          </p>
-          <button
-            onClick={() => dispatch(setAuhorizationModalVisiblty())}
-            className="bg-[#46A358] rounded-md text-white p-[8px_25px] max-[335px]:w-full transition-all hover:bg-[#3d8d4c]"
-          >
-            Join GreenShop
-          </button>
-        </div>
+        {!user && (
+          <>
+            <div className="w-full flex items-center justify-center">
+              <img
+                className="w-full rounded-2xl"
+                src={blogimg}
+                alt="GreenShop Blog"
+              />
+            </div>
+            <div className="text-center flex items-center justify-center flex-col gap-4">
+              <h1 className="font-bold text-center text-6xl leading-[130%] max-[730px]:text-4xl max-[430px]:text-2xl">
+                Monetize your content <br /> with
+                <span className="text-[#46A358]"> GreenShop</span>
+              </h1>
+              <p className="text-center w-[91%] leading-[140%] text-[#3d3d3d] font-medium max-[730px]:w-[100%] max-[730px]:font-normal max-[730px]:text-[14px]">
+                GreenShop - a platform for buying and selling, publishing and
+                monetizing all types of flowers: articles, notes, video, photos,
+                podcasts or songs.
+              </p>
+              <button
+                onClick={() => dispatch(setAuhorizationModalVisiblty())}
+                className="bg-[#46A358] rounded-md text-white p-[8px_25px] max-[335px]:w-full transition-all hover:bg-[#3d8d4c]"
+              >
+                Join GreenShop
+              </button>
+            </div>
+          </>
+        )}
         <div className="grid grid-cols-3 gap-5 my-10 max-[1000px]:grid-cols-2 max-[630px]:grid-cols-1">
           <div className="ant-card ant-card-bordered flex flex-col justify-between">
             <div className="ant-card-body">

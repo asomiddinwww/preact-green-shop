@@ -1,9 +1,9 @@
 import { ShoppingCart, Heart, Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useReduxDispatch, useReduxSelector } from "../../../../hooks/useRedux"; // Selector qo'shildi
-import { getData, toggleWishlist } from "../../../../redux/shop-slice"; // toggleWishlist to'g'ri nomlandi
-import type { ShopCardType } from "../../../../@types/inedx";
+import { useReduxDispatch, useReduxSelector } from "../../../../hooks/useRedux";
+import { getData, toggleWishlist } from "../../../../redux/shop-slice";
 import type { FC } from "react";
+import type { ShopCardType } from "../../../../@types/inedx";
 
 const Card: FC<ShopCardType> = (props) => {
   const { _id, title, main_image, price, discount_price } = props;
@@ -22,11 +22,17 @@ const Card: FC<ShopCardType> = (props) => {
   const handleLike = (e: React.MouseEvent) => {
     e.stopPropagation();
     dispatch(toggleWishlist(props));
-    navigate("/wishlist");
+  };
+
+  const handleNavigate = () => {
+    navigate(`/shop/house-plants/${_id}`);
   };
 
   return (
-    <div className="w-[300px] bg-white rounded-lg group cursor-pointer transition-all">
+    <div
+      onClick={handleNavigate}
+      className="w-[300px] bg-white rounded-lg group cursor-pointer transition-all"
+    >
       <div className="bg-[#FBFBFB] p-4 rounded-t-lg flex justify-center items-center h-[250px] overflow-hidden relative border-t-2 border-transparent group-hover:border-[#46A358] transition-all duration-300">
         <img
           src={main_image}
@@ -54,7 +60,10 @@ const Card: FC<ShopCardType> = (props) => {
           </button>
 
           <button
-            onClick={() => navigate("/search")}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleNavigate();
+            }}
             className="bg-white p-2 rounded-lg text-[#3D3D3D] hover:bg-[#46A358] hover:text-white shadow-md transition-colors"
           >
             <Search size={20} />

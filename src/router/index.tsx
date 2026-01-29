@@ -1,45 +1,29 @@
-import MainLayout from "../components/layout/MainLayout";
-import Blog from "../pages/blog";
-import Shop from "../pages/shop";
-import Plant from "../pages/plant";
-import Home from "../pages/home";
-import ProductDetail from "../components/dashboard/products/carditemsearch";
 import { createBrowserRouter } from "react-router-dom";
-import WishlistPage from "../components/product-shop/like";
+import MainLayout from "../components/layout/MainLayout";
+import Home from "../pages/home";
+import Profile from "../pages/profile/Profile";
+import Shop from "../pages/shop";
+import ProductPage from "../components/product-shop/search";
+import BlogDetail from "../pages/BlogDetail";
+import CheckoutPage from "../pages/shop/checkout/CheckoutPage";
+import Blog from "../pages/blog";
+import Login from "../components/modals/modals-item/authorization/login";
+import Register from "../components/modals/modals-item/authorization/register";
 
 export const router = createBrowserRouter([
   {
-    path: "/",
     element: <MainLayout />,
     children: [
-      {
-        index: true,
-        element: <Home />,
-      },
-      {
-        path: "home",
-        element: <Home />,
-      },
-      {
-        path: "blogs",
-        element: <Blog />,
-      },
-      {
-        path: "shop",
-        element: <Shop />,
-      },
-      {
-        path: "plant",
-        element: <Plant />,
-      },
-      {
-        path: "search",
-        element: <ProductDetail />,
-      },
-      {
-        path: "wishlist",
-        element: <WishlistPage />,
-      },
+      { path: "/", element: <Home /> },
+      { path: "/home", element: <Home /> },
+      { path: "/Blogs", element: <Blog /> },
+      { path: "/profile", element: <Profile /> },
+      { path: "/shop", element: <Shop /> },
+      { path: "/shop/:category/:id", element: <ProductPage /> },
+      { path: "/blog/:id", element: <BlogDetail /> },
+      { path: "/checkout", element: <CheckoutPage /> },
+      { path: "/login", element: <Login /> },
+      { path: "/register", element: <Register /> },
     ],
   },
 ]);

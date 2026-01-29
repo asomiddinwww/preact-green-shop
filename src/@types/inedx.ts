@@ -32,22 +32,21 @@ export interface AuthType {
   wishlist: string[];
   _id: string;
 }
-export interface HeroMoctTyoe {
-  id: number;
-  title: string;
-  subTittle: string;
-  description: string;
-  buttonText: string;
-  big_img_url: string;
-  small_img_url: string;
+
+export interface RegisterType {
+  name: string;
+  surname: string;
+  email: string;
+  password: string;
+  confirm_password: string;
 }
+
 export interface CategoryType {
   count: number;
   created_at: string;
   created_by: string;
   route_path: string;
   title: string;
-  __v: string;
   _id: string;
 }
 
@@ -65,40 +64,48 @@ export interface DiscountFlowerType {
 }
 
 export interface ProductType {
-  category: string;
-  comments: [];
-  created_at: string;
-  created_by: string;
+  _id: string;
+  title: string;
+  price: number;
+  main_image: string;
+  discount: boolean;
+  discount_price?: number;
+  short_description: string;
   description: string;
   detailed_images: string[];
-  discount: boolean;
-  discount_price: number;
-  main_image: string;
-  price: number;
-  count: number | undefined;
   rate: number;
-  short_description: string;
-  sold_times: number;
-  tags: [];
-  title: string;
   views: number;
+  tags: [];
+  comments: [];
+  sold_items: number;
+  created_by: string;
+  created_at: string;
+  category: string;
+  count?: number | undefined;
   userPrice?: number;
-  _id: string;
 }
-export interface DiscountFlowerType {
-  discoount_up_to: number;
+
+export interface ProductsTitleType {
   id: number;
-  poster_image_url: string;
   title: string;
+  route_path: string;
 }
 export interface ShopCardType extends ProductType {
   counter: number;
   userPrice: number;
 }
-export interface Product {
-  id: number;
-  name: string;
-  price: number;
-  image: string;
-  category: string;
+export interface ShopCartType extends ProductType {
+  counter: number;
+  userPrice: number;
+}
+
+export interface BlogType {
+  _id: string;
+  title: string;
+  short_description: string;
+  content: string;
+  created_by: string;
+  created_at: string;
+  reaction_length: number;
+  views?: number;
 }

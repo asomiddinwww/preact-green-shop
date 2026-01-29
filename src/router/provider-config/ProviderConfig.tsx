@@ -1,21 +1,24 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
-import Modals from "../../components/modals";
 import { Provider } from "react-redux";
+import { Toaster } from "react-hot-toast";
 import { store } from "../../redux";
+import Modals from "../../components/modals";
 
-const ProviderConf = ({ children }: { children: React.ReactNode }) => {
-  const queryClinent = new QueryClient();
+const ProviderConfig = ({ children }: { children: React.ReactNode }) => {
+  const queryClient = new QueryClient();
+
   return (
     <>
       <Provider store={store}>
-        <QueryClientProvider client={queryClinent}>
+        <QueryClientProvider client={queryClient}>
           {children}
           <Modals />
+          <Toaster />
         </QueryClientProvider>
       </Provider>
     </>
   );
 };
 
-export default ProviderConf;
+export default ProviderConfig;

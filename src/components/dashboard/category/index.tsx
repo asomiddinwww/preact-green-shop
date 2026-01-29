@@ -1,10 +1,10 @@
 import { useState } from "react"; // Narxni vaqtincha saqlash uchun
-import { LoaderApi } from "../../../generic/loader";
 import { useSearchParamsHandler } from "../../../hooks/paramsApi";
 import { useQueryHandler } from "../../../hooks/useQuery";
 import Discount from "./discount";
 import type { CategoryType } from "../../../@types/inedx";
 import { Slider } from "antd";
+import { loaderApi } from "../../../generic/loader";
 
 const Category = () => {
   const { setParam, getParam } = useSearchParamsHandler();
@@ -19,7 +19,7 @@ const Category = () => {
 
   const { isLoading, isError } = queryResponse;
   const categories = (queryResponse.data as any)?.data as CategoryType[];
-  const { categoryLoader } = LoaderApi();
+  const { cateGoryLoader } = loaderApi();
 
   const [slider, setSlider] = useState<number[]>([0, 1000]);
 
@@ -34,7 +34,7 @@ const Category = () => {
         <h2 className="font-bold text-[18px] mb-3 px-5">Categories</h2>
         <div className="px-5 flex flex-col gap-4">
           {isLoading || isError
-            ? categoryLoader()
+            ? cateGoryLoader()
             : categories?.map((value) => (
                 <div
                   onClick={() =>

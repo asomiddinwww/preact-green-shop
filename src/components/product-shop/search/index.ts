@@ -1,3 +1,0 @@
-ReferenceError;
-fetch;
-true;

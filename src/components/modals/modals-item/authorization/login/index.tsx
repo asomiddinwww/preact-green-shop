@@ -20,6 +20,7 @@ const Login: React.FC = () => {
         dispatch(setCredentials({ token, user }));
 
         message.success("Muvaffaqiyatli kirdingiz!");
+        window.location.reload();
         dispatch(setAuhorizationModalVisiblty());
       },
       onError: () => message.error("Xato!"),
