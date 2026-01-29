@@ -8,23 +8,21 @@ const WishlistPage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useReduxDispatch();
 
-  // Redux-dan wishlist ma'lumotlarini olamiz
   const { wishlist } = useReduxSelector((state) => state.shopSlice);
 
   return (
-    <div className="max-w-[1200px] mx-auto px-10 py-10 font-sans">
+    <div className="max-w-[100%] mx-auto p-5 font-sans">
       <h2 className="text-[#3D3D3D] text-2xl font-bold border-b border-[#EAEAEA] pb-4">
         My Wishlist
       </h2>
 
       {wishlist.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-8 mt-8">
           {wishlist.map((product) => (
             <div
               key={product._id}
               className="border border-[#F5F5F5] rounded-lg overflow-hidden transition-shadow hover:shadow-lg"
             >
-              {/* Mahsulot rasmi */}
               <div className="bg-[#FBFBFB] p-5 flex justify-center items-center h-[220px]">
                 <img
                   src={product.main_image}
@@ -33,7 +31,6 @@ const WishlistPage: React.FC = () => {
                 />
               </div>
 
-              {/* Ma'lumotlar */}
               <div className="p-4">
                 <h4 className="text-[#3D3D3D] text-lg font-medium truncate">
                   {product.title}

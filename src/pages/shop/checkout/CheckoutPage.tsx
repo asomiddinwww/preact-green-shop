@@ -225,7 +225,7 @@ const CheckoutPage = () => {
               <Radio.Group
                 onChange={(e) => setPaymentMethod(e.target.value)}
                 value={paymentMethod}
-                className="w-full grid grid-cols-1 gap-3"
+                className="flex! flex-col! w-full gap-4"
               >
                 <div
                   className={`border rounded-xl p-4 transition-all hover:bg-gray-50 ${paymentMethod === "paypal" ? "border-[#46A358] bg-[#46A358]/5" : "border-gray-200"}`}
@@ -274,7 +274,6 @@ const CheckoutPage = () => {
             </div>
           </div>
 
-          {/* RIGHT: Order Summary */}
           <div className="w-full lg:w-[400px] lg:sticky lg:top-8">
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
               <h2 className="text-xl font-bold text-[#3D3D3D] mb-6 border-b pb-4">
@@ -354,8 +353,6 @@ const CheckoutPage = () => {
         </form>
       </div>
 
-      {/* SUCCESS MODAL UI ENHANCEMENT */}
-      {/* ULTRA-MODERN NEUMORPHIC SUCCESS MODAL */}
       <Modal
         open={isModalOpen}
         onCancel={() => setIsModalOpen(false)}
@@ -363,12 +360,10 @@ const CheckoutPage = () => {
         width={700}
         centered
         className="ultra-modern-modal"
-        closeIcon={null} // Tozalik uchun yopish tugmasini olib tashladim
+        closeIcon={null}
       >
         <div className="flex flex-col md:flex-row min-h-[500px] overflow-hidden rounded-[40px] bg-white">
-          {/* CHAP TARAF: Buyurtma holati (Visual Sidebar) */}
           <div className="w-full md:w-[280px] bg-[#46A358] p-10 text-white flex flex-col justify-between relative overflow-hidden">
-            {/* Dekorativ aylana */}
             <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-white/10 rounded-full"></div>
 
             <div>
@@ -391,7 +386,6 @@ const CheckoutPage = () => {
             </div>
           </div>
 
-          {/* O'NG TARAF: Chek va Mahsulotlar */}
           <div className="flex-1 p-8 md:p-12 bg-[#FBFBFB] flex flex-col">
             <div className="flex justify-between items-start mb-10">
               <div>
@@ -410,7 +404,6 @@ const CheckoutPage = () => {
               </div>
             </div>
 
-            {/* Mahsulotlar - Horizontal Scroll yoki List */}
             <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar mb-8">
               <div className="grid gap-4">
                 {data?.map((item: ShopCartType) => (
@@ -443,28 +436,26 @@ const CheckoutPage = () => {
               </div>
             </div>
 
-            {/* Action Area */}
             <div className="mt-auto pt-6 border-t border-gray-200/60">
               <div className="flex justify-between items-center mb-6 px-2">
                 <div className="text-[12px] text-gray-400">
-                  Payment:{" "}
+                  Payment:
                   <span className="text-[#3D3D3D] font-bold capitalize">
                     {paymentMethod}
                   </span>
                 </div>
                 <div className="text-[12px] text-gray-400">
-                  Shipping:{" "}
+                  Shipping:
                   <span className="text-[#3D3D3D] font-bold">
                     ${shipping.toFixed(2)}
                   </span>
                 </div>
               </div>
 
-              {/* Bosilganda yo'naltiradigan tugma */}
               <button
                 onClick={() => {
                   setIsModalOpen(false);
-                  navigate("/ProfilePage"); // O'zingizga kerakli sahifaga o'zgartiring
+                  navigate("/ProfilePage");
                 }}
                 className="w-full bg-[#3D3D3D] hover:bg-[#46A358] text-white h-[60px] rounded-2xl font-black text-[16px] transition-all duration-300 shadow-2xl hover:shadow-[#46A358]/40 flex items-center justify-center gap-4 group"
               >

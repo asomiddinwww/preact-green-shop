@@ -2,6 +2,7 @@ import { ShoppingCart, Heart, Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useReduxDispatch, useReduxSelector } from "../../../../hooks/useRedux";
 import { getData, toggleWishlist } from "../../../../redux/shop-slice";
+import { message } from "antd";
 import type { FC } from "react";
 import type { ShopCardType } from "../../../../@types/inedx";
 
@@ -12,16 +13,33 @@ const Card: FC<ShopCardType> = (props) => {
   const dispatch = useReduxDispatch();
 
   const { wishlist } = useReduxSelector((state) => state.shopSlice);
+  const { user } = useReduxSelector((state) => state.authSlice);
+
   const isLiked = wishlist?.some((item) => item._id === _id);
+
+  const checkAuth = () => {
+    if (!user) {
+      message.warning("Iltimos, avval tizimga kiring!");
+      return false;
+    }
+    return true;
+  };
 
   const addToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
-    dispatch(getData(props));
+
+    if (checkAuth()) {
+      dispatch(getData(props));
+      message.success("Savatchaga qo'shildi!");
+    }
   };
 
   const handleLike = (e: React.MouseEvent) => {
     e.stopPropagation();
-    dispatch(toggleWishlist(props));
+
+    if (checkAuth()) {
+      dispatch(toggleWishlist(props));
+    }
   };
 
   const handleNavigate = () => {

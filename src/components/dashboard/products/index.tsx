@@ -5,20 +5,31 @@ import Card from "./card";
 
 export const useSearchParamsHandler = () => {
   const [params, setParams] = useSearchParams();
+
   const getParam = (path: string) => params.get(path);
+
   const setParam = (newParams: Record<string, any>) => {
     const currentParams = Object.fromEntries(params.entries());
-    setParams({ ...currentParams, ...newParams });
+    const updatedParams = { ...currentParams, ...newParams };
+
+    // Bo'sh qiymatlarni o'chirish
+    Object.keys(updatedParams).forEach((key) => {
+      if (!updatedParams[key]) delete updatedParams[key];
+    });
+
+    setParams(updatedParams);
   };
+
   return { getParam, setParam, params };
 };
 
 const Productss = () => {
   const { getParam, setParam } = useSearchParamsHandler();
 
+  // URL'dagi link formatiga moslab olamiz
   const category = getParam("category") || "house-plants";
   const type = getParam("type") || "all-plants";
-  const sort = getParam("sort") || "default";
+  const sort = getParam("sort") || "default-sorting"; // Default qiymat linkdagidek
   const range_min = Number(getParam("range_min")) || 0;
   const range_max = Number(getParam("range_max")) || 1000;
 
@@ -69,10 +80,9 @@ const Productss = () => {
             onChange={(e) => setParam({ sort: e.target.value })}
             className="bg-transparent font-medium focus:outline-none cursor-pointer text-[15px]"
           >
-            <option value="default">Default sorting</option>
+            <option value="default-sorting">Default sorting</option>
             <option value="low-to-high">Price: Low to High</option>
-            <option value="high-to-low">Price: High to Low</option>
-            <option value="newest">Newest</option>
+            <option value="most-expensive">Most Expensive</option>
           </select>
         </div>
       </div>
@@ -80,11 +90,14 @@ const Productss = () => {
       {isLoading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
           {[...Array(6)].map((_, i) => (
-            <SkeletonImage
-              className="w-[120px!] h-[120px!]"
-              style={{ width: 250, height: 250 }}
+            <div
               key={i}
-            />
+              className="bg-gray-50 rounded-lg p-4 w-[250px] h-[300px] animate-pulse flex flex-col gap-4"
+            >
+              <div className="bg-gray-200 w-full h-[200px] rounded-md" />
+              <div className="bg-gray-200 w-3/4 h-4 rounded" />
+              <div className="bg-gray-200 w-1/2 h-4 rounded" />
+            </div>
           ))}
         </div>
       ) : isError ? (
