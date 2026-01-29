@@ -405,7 +405,7 @@ const CheckoutPage = () => {
             </div>
 
             <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar mb-8">
-              <div className="grid gap-4">
+              <div className="grid gap-4 h-70">
                 {data?.map((item: ShopCartType) => (
                   <div
                     key={item._id}

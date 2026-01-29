@@ -115,3 +115,11 @@ export interface getCouponType {
   id: number;
   title: number;
 }
+export interface BlogCardData {
+  id: number | string;
+  title: string;
+  description: string;
+  views: number;
+  comments: number;
+  likes: number;
+}

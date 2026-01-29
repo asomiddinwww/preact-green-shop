@@ -29,7 +29,7 @@ const Category = () => {
 
   let category = getParam("category") || "house-plants";
   return (
-    <div className="flex flex-col gap-8 w-90">
+    <div className="flex flex-col gap-8 w-90 max-[1010px]:w-full p-2">
       <section>
         <h2 className="font-bold text-[18px] mb-3 px-5">Categories</h2>
         <div className="px-5 flex flex-col gap-4">

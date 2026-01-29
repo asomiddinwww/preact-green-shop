@@ -26,7 +26,7 @@ const CardTotal = () => {
   };
 
   return (
-    <div className="w-[450px]!">
+    <div className="w-[450px]! max-[930px]:w-full!">
       <h3 className="pb-5 text-[#3D3D3D] font-bold text-[18px]">Card Total</h3>
       <Form onFinish={getCoupon} className="flex h-[40px] mt-[35px]">
         <input

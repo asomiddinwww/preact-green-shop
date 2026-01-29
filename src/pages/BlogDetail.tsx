@@ -32,25 +32,7 @@ const BlogDetail: React.FC = () => {
   if (isLoading)
     return (
       <div className="max-w-[1550px] w-[90%] mx-auto px-4 py-10">
-        <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-gray-300 rounded w-3/4"></div>
-          <div className="h-4 bg-gray-200 rounded w-full"></div>
-          <div className="h-4 bg-gray-200 rounded w-full"></div>
-          <div className="h-4 bg-gray-200 rounded w-full"></div>
-          <div className="h-4 bg-gray-200 rounded w-full"></div>
-          <div className="h-4 bg-gray-200 rounded w-full"></div>
-          <div className="h-4 bg-gray-200 rounded w-full"></div>
-          <div className="h-4 bg-gray-200 rounded w-full"></div>
-          <div className="h-4 bg-gray-200 rounded w-full"></div>
-          <div className="h-4 bg-gray-200 rounded w-full"></div>
-
-          <div className="flex items-center gap-4 mt-6">
-            <div className="h-6 w-16 bg-gray-300 rounded"></div>
-            <div className="h-6 w-16 bg-gray-300 rounded"></div>
-            <div className="h-6 w-16 bg-gray-300 rounded"></div>
-            <div className="h-6 w-16 bg-gray-300 rounded"></div>
-          </div>
-        </div>
+        <div className="animate-pulse space-y-4"></div>
       </div>
     );
 

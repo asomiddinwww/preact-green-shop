@@ -18,6 +18,7 @@
     "@tanstack/react-query-devtools": "^5.91.2",
     "antd": "^6.2.0",
     "axios": "^1.13.3",
+    "firebase": "^12.8.0",
     "install": "^0.13.0",
     "js-cookie": "^3.0.5",
     "jwt-decode": "^4.0.0",

@@ -48,9 +48,9 @@ const Productss = () => {
   const products = (response as any)?.data;
 
   return (
-    <div className="mt-5 w-full pr-3">
-      <div className="flex items-center justify-between border-b border-[#46A358]/20 mb-6 pb-2">
-        <div className="flex gap-8">
+    <div className="mt-5 w-full pr-3 p-3">
+      <div className="flex items-center justify-between border-b border-[#46A358]/20 mb-6 pb-2 max-[577px]:justify-end">
+        <div className="flex gap-8 max-[577px]:hidden">
           {[
             { label: "All Plants", value: "all-plants" },
             { label: "New Arrivals", value: "new-arrivals" },

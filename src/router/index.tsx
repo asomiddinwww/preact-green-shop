@@ -34,7 +34,7 @@ export const router = createBrowserRouter([
           { path: "/ProfilePage", element: <ProfilePage /> },
           { path: "/like", element: <WishlistPage /> },
           { path: "/orders", element: <Orders /> },
-          { path: "/address", element: <div>Address Page (Tez kunda)</div> },
+          { path: "/address", element: <div>Addres</div> },
           { path: "/my-products", element: <MyProducts /> },
         ],
       },
