@@ -7,7 +7,7 @@ import {
 } from "@ant-design/icons";
 import { MessageSquare, Heart, Eye, Bookmark, Lock } from "lucide-react";
 import { useReduxDispatch, useReduxSelector } from "../../hooks/useRedux";
-import { useQueryHandler } from "../../hooks/useQuery/indexx";
+import { useQueryHandler } from "../../hooks/useQuery";
 import blogimg from "../../img/blog.png";
 import { setAuhorizationModalVisiblty } from "../../redux/modal-store";
 

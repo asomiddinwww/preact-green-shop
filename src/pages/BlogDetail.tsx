@@ -7,7 +7,7 @@ import {
 } from "@ant-design/icons";
 import { Avatar, Skeleton, Empty } from "antd";
 import { Eye, Heart } from "lucide-react";
-import { useQueryHandler } from "../hooks/useQuery";
+import { useQueryHandler } from "../hooks/useQuery/index";
 
 interface IAuthor {
   _id: string;
