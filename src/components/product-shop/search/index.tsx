@@ -78,7 +78,6 @@ const ProductPage = () => {
 
       <div className="flex flex-col lg:flex-row gap-16">
         <div className="flex flex-1 gap-6 h-fit lg:h-[600px]">
-          {/* Thumbnails */}
           <div className="flex flex-col gap-4 w-[85px] h-full overflow-y-auto hidden md:flex no-scrollbar">
             {images.map((img, idx) => (
               <div

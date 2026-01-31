@@ -33,7 +33,7 @@ const authSlice = createSlice({
       state.user = user;
       state.token = token;
 
-      Cookies.set("token", token, { expires: 7 }); // 7 kunga
+      Cookies.set("token", token, { expires: 7 });
       Cookies.set("user", JSON.stringify(user), { expires: 7 });
     },
     logOut: (state) => {

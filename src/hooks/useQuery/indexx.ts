@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useAxios } from "../useAxios/axios";
+import { useAxios } from "../useAxios/UseAxios";
 
 interface QueryHandlerType {
   url: string;

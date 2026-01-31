@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { Modal, Radio, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import { CarOutlined, BankOutlined } from "@ant-design/icons";
+import Cookies from "js-cookie"; // <--- Cookie elementini qo'shdik
 import type { ShopCartType } from "../../../@types/inedx";
 
 const CheckoutPage = () => {
@@ -27,13 +28,28 @@ const CheckoutPage = () => {
   });
 
   useEffect(() => {
+    const savedAddress = Cookies.get("user_billing_address");
+    const parsedAddress = savedAddress ? JSON.parse(savedAddress) : null;
+
     if (user) {
       setFormData((prev) => ({
         ...prev,
         firstName: user.firstName || user.name || "",
         lastName: user.lastName || user.surname || "",
         email: user.email || "",
-        phone: user.phone_number || "",
+        phone: user.phone_number?.replace("+998", "") || "",
+        country: parsedAddress?.country || user.billing_address?.country || "",
+        city: parsedAddress?.town || user.billing_address?.town || "",
+        street:
+          parsedAddress?.street_address ||
+          user.billing_address?.street_address ||
+          "",
+        state: parsedAddress?.state || user.billing_address?.state || "",
+        zip: parsedAddress?.zip || user.billing_address?.zip || "",
+        appartment:
+          parsedAddress?.extra_address ||
+          user.billing_address?.extra_address ||
+          "",
       }));
     }
   }, [user]);
@@ -70,13 +86,6 @@ const CheckoutPage = () => {
   return (
     <div className="bg-[#F9FBFA] min-h-screen py-12">
       <div className="w-[92%] max-w-[1250px] m-auto">
-        <div className="mb-10">
-          <h1 className="text-3xl font-extrabold text-[#3D3D3D]">Checkout</h1>
-          <p className="text-gray-500 mt-1">
-            Please enter your details to complete your purchase.
-          </p>
-        </div>
-
         <form
           onSubmit={handlePlaceOrder}
           className="flex flex-col lg:flex-row gap-10 items-start"
@@ -129,6 +138,10 @@ const CheckoutPage = () => {
                 </label>
                 <input
                   required
+                  value={formData.country}
+                  onChange={(e) =>
+                    setFormData({ ...formData, country: e.target.value })
+                  }
                   placeholder="Select country"
                   className={inputStyle}
                 />
@@ -139,6 +152,10 @@ const CheckoutPage = () => {
                 </label>
                 <input
                   required
+                  value={formData.city}
+                  onChange={(e) =>
+                    setFormData({ ...formData, city: e.target.value })
+                  }
                   placeholder="City name"
                   className={inputStyle}
                 />
@@ -150,10 +167,18 @@ const CheckoutPage = () => {
                 </label>
                 <input
                   required
+                  value={formData.street}
+                  onChange={(e) =>
+                    setFormData({ ...formData, street: e.target.value })
+                  }
                   placeholder="House number and street name"
                   className={inputStyle}
                 />
                 <input
+                  value={formData.appartment}
+                  onChange={(e) =>
+                    setFormData({ ...formData, appartment: e.target.value })
+                  }
                   placeholder="Apartment, suite, unit, etc. (optional)"
                   className={`${inputStyle} mt-3`}
                 />
@@ -165,6 +190,10 @@ const CheckoutPage = () => {
                 </label>
                 <input
                   required
+                  value={formData.state}
+                  onChange={(e) =>
+                    setFormData({ ...formData, state: e.target.value })
+                  }
                   placeholder="Select state"
                   className={inputStyle}
                 />
@@ -173,7 +202,15 @@ const CheckoutPage = () => {
                 <label className={labelStyle}>
                   Zip Code <span className="text-red-500">*</span>
                 </label>
-                <input required placeholder="Zip code" className={inputStyle} />
+                <input
+                  required
+                  value={formData.zip}
+                  onChange={(e) =>
+                    setFormData({ ...formData, zip: e.target.value })
+                  }
+                  placeholder="Zip code"
+                  className={inputStyle}
+                />
               </div>
 
               <div className="space-y-1">

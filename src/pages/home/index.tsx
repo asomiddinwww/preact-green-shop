@@ -1,5 +1,5 @@
 import Products from "../../components/dashboard";
-import Blog from "./section/Blog";
+import BlogPage from "../blog";
 import Infor from "./section/Infor";
 import Showcase from "./section/Showcase";
 
@@ -9,7 +9,7 @@ const Home = () => {
       <Showcase />
       <Products />
       <Infor />
-      <Blog />
+      <BlogPage />
     </div>
   );
 };

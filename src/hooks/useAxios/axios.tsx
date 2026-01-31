@@ -5,27 +5,42 @@ interface AxiosType {
   url: string;
   method?: "GET" | "POST" | "PUT" | "DELETE";
   body?: object;
-  param?: object;
+  param?: object; // Komponentdan keladigan qo'shimcha parametrlar (masalan: search)
 }
+
 export const useAxios = () => {
   const request = ({ url, method = "GET", body, param }: AxiosType) => {
+    // Cookiedan haqiqiy tokenni olaxmiz
+    const token = Cookies.get("token") || Cookies.get("access_token");
+
+    const fullUrl = `${import.meta.env.VITE_BASE_URL}/${url}`.replace(
+      /([^:]\/)\/+/g,
+      "$1",
+    );
+
     return axios({
-      url: `${import.meta.env.VITE_BASE_URL}/${url}`,
+      url: fullUrl,
       method,
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${Cookies.get("token")}`,
+        ...(token && { Authorization: `Bearer ${token}` }),
       },
       data: body,
       params: {
-        access_token: "64eecf3b54abde61153d1fd3",
+        access_token: token,
         ...param,
       },
     })
-      .then((res) => res.data.data)
+      .then((res) => res.data)
       .catch((error) => {
+        console.error("API Xatosi:", {
+          status: error.response?.status,
+          message: error.response?.data?.message || error.message,
+          url: fullUrl,
+        });
         throw error;
       });
   };
+
   return request;
 };

@@ -116,10 +116,13 @@ export interface getCouponType {
   title: number;
 }
 export interface BlogCardData {
-  id: number | string;
+  id: string | number;
   title: string;
-  description: string;
+  content?: string;
+  description?: string;
   views: number;
-  comments: number;
-  likes: number;
+  reaction_length?: number;
+  likes?: number;
+  comments_count?: number;
+  comments?: number;
 }

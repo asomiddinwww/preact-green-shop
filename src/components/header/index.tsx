@@ -4,7 +4,7 @@ import search from "../../img/search.svg";
 import shop from "../../img/shop.svg";
 import log from "../../img/Logout.svg";
 import { Badge, Button } from "antd";
-import { NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useReduxDispatch, useReduxSelector } from "../../hooks/useRedux";
 import { setAuhorizationModalVisiblty } from "../../redux/modal-store";
 import { logOut } from "../../redux/auth-slice";
@@ -28,9 +28,9 @@ const Header = () => {
   return (
     <div className="w-full border-b-1 border-[#46A35880] fixed bg-white z-50">
       <div className="w-[95%] md:w-[90%] m-auto flex p-3 md:p-4 items-center justify-between">
-        <div className="flex-shrink-0">
+        <Link to={"/"} className="flex-shrink-0">
           <img src={logo} alt="logo" className="w-[120px] md:w-auto" />
-        </div>
+        </Link>
 
         <div className="hidden md:block">
           <ul className="flex items-center gap-6 lg:gap-10">
