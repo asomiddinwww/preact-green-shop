@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
   MessageOutlined,
   SendOutlined,
@@ -12,8 +12,6 @@ import { useQueryHandler } from "../../../hooks/useQuery/indexx";
 
 const UserProfile = () => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
-
   const { data: apiResponse, isLoading } = useQueryHandler({
     url: `api/user/by_id/${id}`, // API documentationdagi path
     pathname: `user-profile-${id}`,
